@@ -13,6 +13,8 @@ const App = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newEventDate, setNewEventDate] = useState("");
     const [newEventDescription, setNewEventDescription] = useState("");
+    const [isVertical, setIsVertical] = useState(false); // 타임라인 방향 상태 추가
+
     const [year, setYear] = useState(2025);
     const [month, setMonth] = useState(1);
     const [day, setDay] = useState(1);
@@ -54,8 +56,9 @@ const App = () => {
         events.sort((a, b) => parseDate(a.date) - parseDate(b.date));
 
         const svg = d3.select(svgRef.current);
-        const width = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
-        const height = 400;
+        const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
+        const height = isVertical ? size : 400; // 세로 방향이면 높이를 늘림
+        const width = isVertical ? 400 : size; // 가로 방향이면 너비를 늘림
 
         svg.attr("width", width).attr("height", height).style("background", "#f9f9f9");
 
@@ -76,12 +79,21 @@ const App = () => {
         zoomBehaviorRef.current = zoom;
 
         // Draw the timeline
-        const lineY = height / 2;
+        /*const lineY = height / 2;
         g.append("line")
             .attr("x1", 50)
             .attr("x2", width - 50)
             .attr("y1", lineY)
             .attr("y2", lineY)
+            .attr("stroke", "black")
+            .attr("stroke-width", 2);*/
+        // Draw the timeline
+        const linePos = isVertical ? width / 2 : height / 2; // 세로/가로 방향에 따라 선 위치 설정
+        g.append("line")
+            .attr("x1", isVertical ? linePos : 50)
+            .attr("x2", isVertical ? linePos : width - 50)
+            .attr("y1", isVertical ? 50 : linePos)
+            .attr("y2", isVertical ? height - 50 : linePos)
             .attr("stroke", "black")
             .attr("stroke-width", 2);
 
@@ -91,7 +103,13 @@ const App = () => {
             .enter()
             .append("g")
             .attr("class", "event")
-            .attr("transform", (d, i) => `translate(${100 + i * baseEventSpacing}, ${lineY - 20})`);
+            //.attr("transform", (d, i) => `translate(${100 + i * baseEventSpacing}, ${lineY - 20})`);
+            .attr(
+                "transform",
+                (d, i) =>
+                    `translate(${isVertical ? linePos : 100 + i * baseEventSpacing}, ${isVertical ? 100 + i * baseEventSpacing : linePos - 20
+                    })`
+        );
 
         eventGroups.append("circle")
             .attr("r", 10)
@@ -99,17 +117,22 @@ const App = () => {
 
         eventGroups.append("text")
             .text(d => d.date)
-            .attr("y", -15)
+            //.attr("y", -15)
+            .attr("y", isVertical ? 0 : -15)
+            .attr("x", isVertical ? 20 : 0)
             .attr("text-anchor", "middle")
             .style("font-size", "12px");
 
         eventGroups.append("text")
             .text(d => d.description)
-            .attr("y", 30)
+            //.attr("y", 30)
+            .attr("y", isVertical ? 30 : 30)
+            .attr("x", isVertical ? 20 : 0)
             .attr("text-anchor", "middle")
             .style("font-size", "12px");
-    }, [events]);
+    }, [events, isVertical]);
 
+    const toggleDirection = () => setIsVertical((prev) => !prev); // 방향 전환 함수
 
     const handleAddEvent = () => {
         if (!newEventDescription.trim()) {
@@ -250,7 +273,12 @@ const App = () => {
 
     return (
         <div>
-            <h1>Timeline with Date Picker</h1>
+            <h1>Timeline History</h1>
+            <div style={{ marginBottom: "10px" }}>
+                <button onClick={toggleDirection}>
+                    Switch to {isVertical ? "Horizontal" : "Vertical"} Timeline
+                </button>
+            </div>
             <div style={{ marginBottom: "10px" }}>
                 <button onClick={openModal}>Add Event</button>
             </div>
