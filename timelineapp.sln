@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "reactproject1", "reactproject1\reactproject1.esproj", "{2EDEBDFA-35EC-45CA-B208-752643E2D310}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "NodejsWebApp1", "NodejsWebApp1\NodejsWebApp1.njsproj", "{9E57471F-E3A1-4E01-8607-B2E05499A13B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +19,10 @@ Global
 		{2EDEBDFA-35EC-45CA-B208-752643E2D310}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EDEBDFA-35EC-45CA-B208-752643E2D310}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2EDEBDFA-35EC-45CA-B208-752643E2D310}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{9E57471F-E3A1-4E01-8607-B2E05499A13B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E57471F-E3A1-4E01-8607-B2E05499A13B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E57471F-E3A1-4E01-8607-B2E05499A13B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E57471F-E3A1-4E01-8607-B2E05499A13B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

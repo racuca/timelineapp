@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import axios from "axios";
 import Modal from "react-modal";
 import * as d3 from "d3";
 import "./App.css";
@@ -7,11 +8,11 @@ Modal.setAppElement("#root");
 
 const App = () => {
     const [events, setEvents] = useState([
-        { id: 1, date: "1900-01-01 00:00:00", description: "Start of 20th Century" },
-        { id: 2, date: "1800-01-01 00:00:00", description: "Industrial Revolution" },
+        { id: 1, date: "0-01-01 00:00:00", description: "Start of AC" },
     ]);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newEventDate, setNewEventDate] = useState("");
+    //const [newEventDate, setNewEventDate] = useState("");
     const [newEventDescription, setNewEventDescription] = useState("");
     const [isVertical, setIsVertical] = useState(false); // 타임라인 방향 상태 추가
 
@@ -23,6 +24,11 @@ const App = () => {
     const [second, setSecond] = useState(0);
     const [isBC, setIsBC] = useState(false);
 
+    const [users, setUsers] = useState([]);
+    const [name, setName] = useState("");
+    const [passwd, setPasswd] = useState("");
+    const [email, setEmail] = useState("");
+
     const svgRef = useRef();
     const containerRef = useRef(); // 스크롤 컨테이너 참조
     const zoomBehaviorRef = useRef();
@@ -30,6 +36,16 @@ const App = () => {
     const baseEventSpacing = 200; // 이벤트 간 기본 간격
 
     useEffect(() => {
+        axios
+            .get("http://localhost:5000/users")
+            .then((response) => {
+                setUsers(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching users:", error);
+            });
+
+
         // 시간순 정렬
         const parseDate = (date) => {
             if (date.startsWith("BC ")) {
@@ -131,6 +147,21 @@ const App = () => {
             .attr("text-anchor", "middle")
             .style("font-size", "12px");
     }, [events, isVertical]);
+
+    // Add a new user
+    const handleAddUser = () => {
+        axios
+            .post("http://localhost:5000/users", { name, passwd, email })
+            .then((response) => {
+                setUsers([...users, response.data]); // Add the new user to the list
+                setName("");
+                setPasswd("");
+                setEmail("");
+            })
+            .catch((error) => {
+                console.error("Error adding user:", error);
+            });
+    };
 
     const toggleDirection = () => setIsVertical((prev) => !prev); // 방향 전환 함수
 
@@ -274,6 +305,36 @@ const App = () => {
     return (
         <div>
             <h1>Timeline History</h1>
+            <div style={{ padding: "20px" }}>
+                <h1>User List</h1>
+                <ul>
+                    {users.map((user) => (
+                        <li key={user.id}>
+                            {user.name} - {user.email}
+                        </li>
+                    ))}
+                </ul>
+                <h2>Add User</h2>
+                <input
+                    type="text"
+                    placeholder="Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
+                <input
+                    type="password"
+                    placeholder=""
+                    value={passwd}
+                    onChange={(e) => setPasswd(e.target.value)}
+                />
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                <button onClick={handleAddUser}>Add User</button>
+            </div>
             <div style={{ marginBottom: "10px" }}>
                 <button onClick={toggleDirection}>
                     Switch to {isVertical ? "Horizontal" : "Vertical"} Timeline
