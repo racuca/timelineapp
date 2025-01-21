@@ -2,13 +2,16 @@ import React, { useRef, useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import * as d3 from "d3";
+import { parseDate } from "./parseUtils";
 import "./App.css";
 
 Modal.setAppElement("#root");
 
 const App = () => {
     const [events, setEvents] = useState([
-        { id: 1, date: "0-01-01 00:00:00", description: "Start of AC" },
+        { id: 1, date: "0100-01-01 00:00:00", description: "test100" },
+        { id: 2, date: "0-01-01 00:00:00", description: "Start of AC" },
+        { id: 3, date: "BC 0100-01-01 00:00:00", description: "BC 100" },
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,30 +47,6 @@ const App = () => {
             .catch((error) => {
                 console.error("Error fetching users:", error);
             });
-
-
-        // 시간순 정렬
-        const parseDate = (date) => {
-            if (date.startsWith("BC ")) {
-                const parts = date.replace("BC ", "").split(/[- :]/); // "BC 0001-01-01 00:00:00" → ["0001", "01", "01", "00", "00", "00"]
-                const bcYear = -parseInt(parts[0], 10) + 1; // BC 1년을 0으로 취급하기 위해 +1
-                const month = parseInt(parts[1], 10) - 1; // 월은 0부터 시작
-                const day = parseInt(parts[2], 10);
-                const hours = parseInt(parts[3], 10);
-                const minutes = parseInt(parts[4], 10);
-                const seconds = parseInt(parts[5], 10);
-
-                // 기원전 날짜를 유닉스 시간으로 계산
-                const bcDate = new Date(Date.UTC(0, 0, 1, 0, 0, 0)); // 기준점: 0년 1월 1일
-                bcDate.setUTCFullYear(bcYear); // 음수 연도를 수동 설정
-                bcDate.setUTCMonth(month); // 월 설정
-                bcDate.setUTCDate(day); // 일 설정
-                bcDate.setUTCHours(hours, minutes, seconds, 0); // 시간 설정
-
-                return bcDate.getTime(); // 유닉스 타임스탬프 반환
-            }
-            return new Date(date).getTime(); // 일반 날짜 처리
-        };
 
         events.sort((a, b) => parseDate(a.date) - parseDate(b.date));
 
@@ -170,13 +149,12 @@ const App = () => {
             alert("Please enter a description for the event.");
             return;
         }
-        const formattedDate = `${isBC ? "BC " : ""}${year.toString().padStart(4, "0")}-${month
-            .toString()
-            .padStart(2, "0")}-${day.toString().padStart(2, "0")} ${hour
-            .toString()
-            .padStart(2, "0")}:${minute.toString().padStart(2, "0")}:${second
-            .toString()
-            .padStart(2, "0")}`;
+        const formattedDate = `${isBC ? "BC " : ""} ${year.toString().padStart(4, "0")}-${month
+            .toString().padStart(2, "0")}-${day
+            .toString().padStart(2, "0")} ${hour
+            .toString().padStart(2, "0")}:${minute
+            .toString().padStart(2, "0")}:${second
+            .toString().padStart(2, "0")}`;
 
         const newEvent = {
             id: events.length + 1,
@@ -185,35 +163,17 @@ const App = () => {
         };
 
         setEvents((prevEvents) => {
-            // 시간순 정렬
-            const parseDate = (date) => {
-                if (date.startsWith("BC ")) {
-                    const parts = date.replace("BC ", "").split(/[- :]/); // "BC 0001-01-01 00:00:00" → ["0001", "01", "01", "00", "00", "00"]
-                    const bcYear = -parseInt(parts[0], 10) + 1; // BC 1년을 0으로 취급하기 위해 +1
-                    const month = parseInt(parts[1], 10) - 1; // 월은 0부터 시작
-                    const day = parseInt(parts[2], 10);
-                    const hours = parseInt(parts[3], 10);
-                    const minutes = parseInt(parts[4], 10);
-                    const seconds = parseInt(parts[5], 10);
 
-                    // 기원전 날짜를 유닉스 시간으로 계산
-                    const bcDate = new Date(Date.UTC(0, 0, 1, 0, 0, 0)); // 기준점: 0년 1월 1일
-                    bcDate.setUTCFullYear(bcYear); // 음수 연도를 수동 설정
-                    bcDate.setUTCMonth(month); // 월 설정
-                    bcDate.setUTCDate(day); // 일 설정
-                    bcDate.setUTCHours(hours, minutes, seconds, 0); // 시간 설정
-
-                    return bcDate.getTime(); // 유닉스 타임스탬프 반환
-                }
-                return new Date(date).getTime(); // 일반 날짜 처리
-            };
+            //events.sort((a, b) => parseDate(a.date) - parseDate(b.date));
 
             const updatedEvents = [...prevEvents, newEvent].sort((a, b) => {
+                console.log("sorted a result:", parseDate(a.date)); 
+                console.log("sorted b result:", parseDate(b.date)); 
                 console.log("sorted result:", parseDate(a.date) - parseDate(b.date)); 
                 return parseDate(a.date) - parseDate(b.date)
             });
-            console.log("sorted events:", updatedEvents); // 여기에서 정렬 결과를 확인
-            return updatedEvents;           
+            //console.log("sorted events:", updatedEvents); // 여기에서 정렬 결과를 확인
+            return updatedEvents;
         });
 
         // 타임라인 크기와 스크롤 조정

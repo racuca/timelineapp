@@ -25,6 +25,7 @@ const db = mysql.createConnection({
     user: "root", // MariaDB 사용자 이름
     password: "Allusinc4u*", // MariaDB 비밀번호
     database: "linehistory", // MariaDB 데이터베이스 이름
+    port: 3307,
 });
 
 db.connect((err) => {
