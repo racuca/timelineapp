@@ -149,7 +149,7 @@ const App = () => {
             alert("Please enter a description for the event.");
             return;
         }
-        const formattedDate = `${isBC ? "BC " : ""} ${year.toString().padStart(4, "0")}-${month
+        const formattedDate = `${isBC ? "BC " : ""}${year.toString().padStart(4, "0")}-${month
             .toString().padStart(2, "0")}-${day
             .toString().padStart(2, "0")} ${hour
             .toString().padStart(2, "0")}:${minute
@@ -170,7 +170,7 @@ const App = () => {
                 console.log("sorted a result:", parseDate(a.date)); 
                 console.log("sorted b result:", parseDate(b.date)); 
                 console.log("sorted result:", parseDate(a.date) - parseDate(b.date)); 
-                return parseDate(a.date) - parseDate(b.date)
+                return parseDate(a.date) - parseDate(b.date);
             });
             //console.log("sorted events:", updatedEvents); // 여기에서 정렬 결과를 확인
             return updatedEvents;
