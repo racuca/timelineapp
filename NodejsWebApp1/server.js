@@ -13,7 +13,7 @@ const cors = require("cors");
 const mysql = require("mysql2");
 
 const app = express();
-const port = 5000;
+const port = 5001;
 
 // Middleware
 app.use(cors());
@@ -62,8 +62,42 @@ app.post("/users", (req, res) => {
                 console.error("Error adding user:", err);
                 res.status(500).json({ error: "Database error" });
             } else {
-                console.log("add user", results);
+                //console.log("user added", results);
                 res.json({ id: results.insertId, name, passwd, email });
+            }
+        }
+    );
+});
+
+// Get all events
+app.get("/events", (req, res) => {
+
+    db.query("SELECT * FROM historyinfo where level=0", (err, results) => {
+        if (err) {
+            console.error("Error fetching events:", err);
+            res.status(500).json({ error: "Database error" });
+        } else {
+            console.log("event query", results);
+            res.json(results);
+        }
+    });
+});
+
+// Add a new event
+// bc = (0 : AC, 1 : BC), 
+// level = (0~10 0 is top important event. 10 is most detail misc event.user event)
+app.post("/events", (req, res) => {
+    const { createdt, title, description, level } = req.body.newEvent;
+    db.query(
+        "INSERT INTO historyinfo (createdt, title, description, level) VALUES (?, ?, ?, ?)",
+        [createdt, title, description, level],
+        (err, results) => {
+            if (err) {
+                console.error("Error adding event:", err);
+                res.status(500).json({ error: "Database error" });
+            } else {
+                //console.log("add event", results);
+                res.json({ id: results.insertId, createdt, title, description, level });
             }
         }
     );

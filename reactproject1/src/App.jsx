@@ -9,15 +9,15 @@ Modal.setAppElement("#root");
 
 const App = () => {
     const [events, setEvents] = useState([
-        { id: 1, date: "0100-01-01 00:00:00", description: "test100" },
-        { id: 2, date: "0-01-01 00:00:00", description: "Start of AC" },
-        { id: 3, date: "BC 0100-01-01 00:00:00", description: "BC 100" },
+        //{ id: 1, date: "0100-01-01 00:00:00", description: "test100", level:0 },
+        //{ id: 2, date: "0-01-01 00:00:00", description: "Start of AC", level:0 },
+        //{ id: 3, date: "BC 0100-01-01 00:00:00", description: "BC 100", level:0 },
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    //const [newEventDate, setNewEventDate] = useState("");
+    const [newEventTitle, setNewEventTitle] = useState(""); 
     const [newEventDescription, setNewEventDescription] = useState("");
-    const [isVertical, setIsVertical] = useState(false); // 타임라인 방향 상태 추가
+    const [newEventLevel, setNewEventLevel] = useState(0); // Default level: 0
 
     const [year, setYear] = useState(2025);
     const [month, setMonth] = useState(1);
@@ -31,16 +31,19 @@ const App = () => {
     const [name, setName] = useState("");
     const [passwd, setPasswd] = useState("");
     const [email, setEmail] = useState("");
+        
+    const [isVertical, setIsVertical] = useState(false); // 타임라인 방향 상태 추가
 
     const svgRef = useRef();
     const containerRef = useRef(); // 스크롤 컨테이너 참조
     const zoomBehaviorRef = useRef();
     const baseWidth = 800; // 기본 타임라인 너비
     const baseEventSpacing = 200; // 이벤트 간 기본 간격
+    const serverurl = "http://localhost:5001";
 
     useEffect(() => {
         axios
-            .get("http://localhost:5000/users")
+            .get(serverurl + "/users")
             .then((response) => {
                 setUsers(response.data);
             })
@@ -48,7 +51,19 @@ const App = () => {
                 console.error("Error fetching users:", error);
             });
 
-        events.sort((a, b) => parseDate(a.date) - parseDate(b.date));
+        axios
+            .get(serverurl + "/events")
+            .then((response) => {
+                const sortedEvents = [...response.data].sort((a, b) => parseDate(a.createdt) - parseDate(b.createdt));
+                if (JSON.stringify(events) !== JSON.stringify(sortedEvents)) {
+                    setEvents(sortedEvents); // 정렬된 데이터 저장
+                } 
+            })
+            .catch((error) => {
+                console.error("Error fetching events:", error);
+            });
+
+        //events.sort((a, b) => parseDate(a.date) - parseDate(b.date));
 
         const svg = d3.select(svgRef.current);
         const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
@@ -74,15 +89,6 @@ const App = () => {
         zoomBehaviorRef.current = zoom;
 
         // Draw the timeline
-        /*const lineY = height / 2;
-        g.append("line")
-            .attr("x1", 50)
-            .attr("x2", width - 50)
-            .attr("y1", lineY)
-            .attr("y2", lineY)
-            .attr("stroke", "black")
-            .attr("stroke-width", 2);*/
-        // Draw the timeline
         const linePos = isVertical ? width / 2 : height / 2; // 세로/가로 방향에 따라 선 위치 설정
         g.append("line")
             .attr("x1", isVertical ? linePos : 50)
@@ -98,7 +104,6 @@ const App = () => {
             .enter()
             .append("g")
             .attr("class", "event")
-            //.attr("transform", (d, i) => `translate(${100 + i * baseEventSpacing}, ${lineY - 20})`);
             .attr(
                 "transform",
                 (d, i) =>
@@ -111,8 +116,7 @@ const App = () => {
             .attr("fill", "steelblue");
 
         eventGroups.append("text")
-            .text(d => d.date)
-            //.attr("y", -15)
+            .text(d => d.createdt)
             .attr("y", isVertical ? 0 : -15)
             .attr("x", isVertical ? 20 : 0)
             .attr("text-anchor", "middle")
@@ -120,17 +124,16 @@ const App = () => {
 
         eventGroups.append("text")
             .text(d => d.description)
-            //.attr("y", 30)
             .attr("y", isVertical ? 30 : 30)
             .attr("x", isVertical ? 20 : 0)
             .attr("text-anchor", "middle")
             .style("font-size", "12px");
-    }, [events, isVertical]);
+    }, [events, isVertical, parseDate, serverurl]);
 
     // Add a new user
     const handleAddUser = () => {
         axios
-            .post("http://localhost:5000/users", { name, passwd, email })
+            .post(serverurl + "/users", { name, passwd, email })
             .then((response) => {
                 setUsers([...users, response.data]); // Add the new user to the list
                 setName("");
@@ -149,6 +152,7 @@ const App = () => {
             alert("Please enter a description for the event.");
             return;
         }
+
         const formattedDate = `${isBC ? "BC " : ""}${year.toString().padStart(4, "0")}-${month
             .toString().padStart(2, "0")}-${day
             .toString().padStart(2, "0")} ${hour
@@ -158,23 +162,29 @@ const App = () => {
 
         const newEvent = {
             id: events.length + 1,
-            date: formattedDate,
+            createdt: formattedDate,
+            title: newEventTitle,
             description: newEventDescription,
+            level: newEventLevel || 0,
         };
-
+        
         setEvents((prevEvents) => {
-
-            //events.sort((a, b) => parseDate(a.date) - parseDate(b.date));
-
-            const updatedEvents = [...prevEvents, newEvent].sort((a, b) => {
-                console.log("sorted a result:", parseDate(a.date)); 
-                console.log("sorted b result:", parseDate(b.date)); 
-                console.log("sorted result:", parseDate(a.date) - parseDate(b.date)); 
-                return parseDate(a.date) - parseDate(b.date);
-            });
-            //console.log("sorted events:", updatedEvents); // 여기에서 정렬 결과를 확인
+            const updatedEvents = [...prevEvents, newEvent].sort((a, b) => parseDate(a.createdt) - parseDate(b.createdt));
             return updatedEvents;
         });
+
+        // save to database.
+        axios
+            .post(serverurl + "/events", { newEvent })
+            .then((response) => {
+                setEvents([...events, response.data]);
+                setNewEventTitle("");
+                setNewEventDescription("");
+                setNewEventLevel(0);
+            })
+            .catch((error) => {
+                console.error("Error adding history:", error);
+            });
 
         // 타임라인 크기와 스크롤 조정
         setTimeout(() => {
@@ -186,9 +196,6 @@ const App = () => {
         }, 0);
 
         closeModal();
-        // 입력값 초기화
-        //setNewDate(new Date());
-        setNewEventDescription("");
     };
 
     const openModal = () => setIsModalOpen(true);
@@ -393,13 +400,35 @@ const App = () => {
                     </label>
                 </div>
                 <div>
+                    <label>Title: </label>
+                    <input
+                        type="text"
+                        value={newEventTitle}
+                        onChange={(e) => setNewEventTitle(e.target.value)}
+                        placeholder="Title"
+                    />
+                </div>
+                <div>
                     <label>Description: </label>
                     <input
                         type="text"
                         value={newEventDescription}
                         onChange={(e) => setNewEventDescription(e.target.value)}
-                        placeholder="Event description"
+                        placeholder="description"
                     />
+                </div>
+                <div>
+                    <label>Level: </label>
+                    <select
+                        value={newEventLevel}
+                        onChange={(e) => setNewEventLevel(Number(e.target.value))}
+                    >
+                        {[...Array(11).keys()].map((level) => (
+                            <option key={level} value={level}>
+                                Level {level}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <button onClick={handleAddEvent}>Add Event</button>
                 <button onClick={closeModal}>Cancel</button>
