@@ -20,6 +20,9 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     const baseWidth = 800; // 기본 타임라인 너비
     const baseEventSpacing = 200; // 이벤트 간 기본 간격
 
+    console.log("events.length ", events.length);
+    console.log("events ", events);
+
     useEffect(() => {
         const svg = d3.select(svgRef.current);
         const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
@@ -67,42 +70,6 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                     })`
             );
 
-        // Add branches
-        eventGroups.append("line")
-            .attr("x1", 0)
-            .attr("y1", 0)
-            .attr("x2", (d, i) => (isVertical ? (i % 2 === 0 ? -50 : 40) : 0))
-            .attr("y2", (d, i) => (isVertical ? 0 : (i % 2 === 0 ? -50 : 50)))
-            .attr("stroke", "gray")
-            .attr("stroke-width", 1.5);
-/*
-        eventGroups.append("rect")
-            .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? -150 : 40) : -60))
-            .attr("y", (d, i) => (isVertical ? -30 : i % 2 === 0 ? -90 : 10))
-            .attr("width", 120)
-            .attr("height", 60)
-            .attr("rx", 8) // rounded corners
-            .attr("ry", 8)
-            .attr("fill", "white")
-            .attr("stroke", "steelblue")
-            .attr("stroke-width", 1.5)
-            .style("box-shadow", "0px 4px 10px rgba(0, 0, 0, 0.1)");
-            
-        eventGroups.append("text")
-            .text(d => d.createdt)
-            .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? -90 : 100) : 0))
-            .attr("y", (d, i) => (isVertical ? -5 : i % 2 === 0 ? -65 : 35))
-            .attr("text-anchor", "middle")
-            .style("font-size", "12px");
-
-        eventGroups.append("text")
-            .text(d => d.description)
-            .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? -90 : 100) : 0))
-            .attr("y", (d, i) => (isVertical ? 20 : i % 2 === 0 ? -45 : 50))
-            .attr("text-anchor", "middle")
-            .style("font-size", "12px")
-            .style("font-weight", "bold");
-*/
         // Add text and dynamically calculate box size
         const textElements = eventGroups.append("text")
             .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? -90 : 100) : 0))
@@ -111,20 +78,21 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
             .style("font-size", "12px");
 
         // 두 줄로 텍스트 추가: 첫 줄은 d.createdt, 둘째 줄은 d.description
-        textElements.each(function (d) {
+        textElements.each(function (d, i) {
             const text = d3.select(this);
             text.append("tspan")
                 .text(d.createdt) // 첫 번째 줄 (날짜)
-                .attr("x", 0)
+                .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? -200 : 0) : 0))
                 .attr("dy", "0em")
                 .style("font-weight", "bold"); // 날짜 강조
 
             text.append("tspan")
                 .text(d.description) // 두 번째 줄 (설명)
-                .attr("x", 0)
-                .attr("dy", "1.2em");
+                .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? -200 : 0) : 0))
+                .attr("dy", "1.5em");
         });
 
+        // 박스 추가
         textElements.each(function (d, i) {
             const bbox = this.getBBox(); // Get text size dynamically
             const padding = 20;
@@ -134,14 +102,24 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 .insert("rect", "text")
                 .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? bbox.x : 100) : bbox.x - 10))
                 .attr("y", (d, i) => (isVertical ? (i % 2 === 0 ? bbox.y : 100) : bbox.y - 10))
-                .attr("width", bbox.width + padding * 2)
-                .attr("height", bbox.height + padding * 2)
-                .attr("rx", 8)
-                .attr("ry", 8)
+                .attr("width", bbox.width + padding)
+                .attr("height", bbox.height + padding)
+                .attr("rx", 4)  // 모서리 radius
+                .attr("ry", 4)
                 .attr("fill", "white")
                 .attr("stroke", "steelblue")
                 .attr("stroke-width", 1.5)
                 .lower(); // Send rectangle to the back
+
+            // 타임라인과 박스를 연결하는 선 추가
+            d3.select(this.parentNode)
+                .append("line")
+                .attr("x1", isVertical ? linePos : bbox.x)
+                .attr("y1", isVertical ? 0 : 0)
+                .attr("x2", isVertical ? (i % 2 === 0 ? linePos - 100 : linePos + 100) : bbox.x)
+                .attr("y2", isVertical ? bbox.y : (i % 2 === 0 ? bbox.y + bbox.height + padding - 10: bbox.y - padding + 10))
+                .attr("stroke", "gray")
+                .attr("stroke-width", 1.5);
         });
 
     }, [events, isVertical]);
