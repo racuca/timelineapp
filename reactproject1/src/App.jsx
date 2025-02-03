@@ -81,6 +81,7 @@ const App = () => {
                 events={events}
                 setEvents={setEvents}
                 serverurl={serverurl}
+                containerRef={containerRef}
             />            
         </div>
     );

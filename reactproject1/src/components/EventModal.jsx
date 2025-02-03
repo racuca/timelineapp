@@ -4,7 +4,7 @@ import Modal from "react-modal";
 import { parseDate } from "../parseUtils";
 
 
-const EventModal = ({ isModalOpen, closeModal, openModal, events, setEvents, serverurl }) => {
+const EventModal = ({ isModalOpen, closeModal, openModal, events, setEvents, serverurl, containerRef }) => {
     const [newEventTitle, setNewEventTitle] = useState(""); 
     const [newEventDescription, setNewEventDescription] = useState("");
     const [newEventLevel, setNewEventLevel] = useState(0); // Default level: 0

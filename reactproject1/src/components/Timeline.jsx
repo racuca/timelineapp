@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
 
 const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical }) => {
@@ -20,14 +20,27 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     const baseWidth = 800; // 기본 타임라인 너비
     const baseEventSpacing = 200; // 이벤트 간 기본 간격
 
-    console.log("events.length ", events.length);
-    console.log("events ", events);
+    //console.log("events.length ", events.length);
+    //console.log("events ", events);
+
+    const [dynamicWidth, setDynamicWidth] = useState(window.innerWidth * 0.8);
+
+    useEffect(() => {
+        const handleResize = () => {
+            console.log("window width change", window.innerWidth);
+            setDynamicWidth(window.innerWidth * 0.8);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     useEffect(() => {
         const svg = d3.select(svgRef.current);
-        const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
-        const height = isVertical ? size : 400; // 세로 방향이면 높이를 늘림
-        const width = isVertical ? 400 : size; // 가로 방향이면 너비를 늘림
+        //const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
+        const size = Math.max(800, events.length * 200 + 100); // 최소 800 유지
+        const height = isVertical ? size : 600; // 세로 방향이면 높이를 늘림
+        const width = isVertical ? 600 : size; // 가로 방향이면 너비를 늘림
 
         svg.attr("width", width).attr("height", height).style("background", "#f9f9f9");
 
@@ -72,7 +85,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
 
         // Add text and dynamically calculate box size
         const textElements = eventGroups.append("text")
-            .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? -90 : 100) : 0))
+            .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? -80 : 100) : 0))
             .attr("y", (d, i) => (isVertical ? 20 : i % 2 === 0 ? -80 : 50))
             .attr("text-anchor", "left")
             .style("font-size", "12px");
@@ -82,13 +95,13 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
             const text = d3.select(this);
             text.append("tspan")
                 .text(d.createdt) // 첫 번째 줄 (날짜)
-                .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? -200 : 0) : 0))
+                .attr("x", isVertical ? (i % 2 === 0 ? -200 : 50) : 0)
                 .attr("dy", "0em")
                 .style("font-weight", "bold"); // 날짜 강조
 
             text.append("tspan")
                 .text(d.description) // 두 번째 줄 (설명)
-                .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? -200 : 0) : 0))
+                .attr("x", isVertical ? (i % 2 === 0 ? -200 : 50) : 0)
                 .attr("dy", "1.5em");
         });
 
@@ -100,8 +113,8 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
             // Add background rectangle for each text
             d3.select(this.parentNode)
                 .insert("rect", "text")
-                .attr("x", (d, i) => (isVertical ? (i % 2 === 0 ? bbox.x : 100) : bbox.x - 10))
-                .attr("y", (d, i) => (isVertical ? (i % 2 === 0 ? bbox.y : 100) : bbox.y - 10))
+                .attr("x", isVertical ? (i % 2 === 0 ? bbox.x-10 : bbox.x-10) : bbox.x-10)
+                .attr("y", isVertical ? (i % 2 === 0 ? bbox.y-10 : bbox.y-10) : bbox.y-10)
                 .attr("width", bbox.width + padding)
                 .attr("height", bbox.height + padding)
                 .attr("rx", 4)  // 모서리 radius
@@ -114,15 +127,15 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
             // 타임라인과 박스를 연결하는 선 추가
             d3.select(this.parentNode)
                 .append("line")
-                .attr("x1", isVertical ? linePos : bbox.x)
+                .attr("x1", isVertical ? 0 : bbox.x)
                 .attr("y1", isVertical ? 0 : 0)
-                .attr("x2", isVertical ? (i % 2 === 0 ? linePos - 100 : linePos + 100) : bbox.x)
+                .attr("x2", isVertical ? (i % 2 === 0 ? bbox.x +bbox.width + 10 : bbox.x - 10) : bbox.x)
                 .attr("y2", isVertical ? bbox.y : (i % 2 === 0 ? bbox.y + bbox.height + padding - 10: bbox.y - padding + 10))
                 .attr("stroke", "gray")
                 .attr("stroke-width", 1.5);
         });
 
-    }, [events, isVertical]);
+    }, [events, isVertical, dynamicWidth]);
 
     return (
         <div>
@@ -132,8 +145,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 <button onClick={handleZoomReset}>Reset Zoom</button>
             </div>
             <div
-                ref={containerRef}
-                style={{ width: "800px", overflowX: "scroll", border: "1px solid #ddd" }}
+                ref={containerRef} style={{ width: "100%", overflowX: "auto", border: "1px solid #ddd" }}
             >
                 <svg ref={svgRef}></svg>
             </div>
