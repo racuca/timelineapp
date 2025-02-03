@@ -53,7 +53,7 @@ const App = () => {
         .catch((error) => {
             console.error("Error fetching events:", error);
         });
-    }, []); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
+    }, [events]); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
 
     const toggleDirection = () => setIsVertical((prev) => !prev); // 방향 전환 함수
 
@@ -68,6 +68,7 @@ const App = () => {
                 <button onClick={toggleDirection}>
                     Switch to {isVertical ? "Horizontal" : "Vertical"} Timeline
                 </button>
+                <button onClick={openModal}>Add Event</button>
             </div>
             <Timeline svgRef={svgRef}
                 containerRef={containerRef}
@@ -77,11 +78,11 @@ const App = () => {
             />
             <EventModal isModalOpen={isModalOpen}
                 closeModal={closeModal}
-                openModal={openModal}
                 events={events}
                 setEvents={setEvents}
                 serverurl={serverurl}
                 containerRef={containerRef}
+                svgRef={svgRef}
             />            
         </div>
     );

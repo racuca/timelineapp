@@ -1,5 +1,6 @@
 // 시간순 정렬
 export const parseDate = (date) => {
+    
     if (date.startsWith("BC ")) {
         const parts = date.replace("BC ", "").split(/[- :]/); // "BC 0001-01-01 00:00:00" → ["0001", "01", "01", "00", "00", "00"]
         const bcYear = -parseInt(parts[0], 10) + 1; // BC 1년을 0으로 취급하기 위해 +1

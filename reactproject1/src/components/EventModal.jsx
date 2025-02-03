@@ -4,7 +4,7 @@ import Modal from "react-modal";
 import { parseDate } from "../parseUtils";
 
 
-const EventModal = ({ isModalOpen, closeModal, openModal, events, setEvents, serverurl, containerRef }) => {
+const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, containerRef, svgRef }) => {
     const [newEventTitle, setNewEventTitle] = useState(""); 
     const [newEventDescription, setNewEventDescription] = useState("");
     const [newEventLevel, setNewEventLevel] = useState(0); // Default level: 0
@@ -119,9 +119,6 @@ const EventModal = ({ isModalOpen, closeModal, openModal, events, setEvents, ser
 
     return (
         <div>
-            <div style={{ marginBottom: "10px" }}>
-                <button onClick={openModal}>Add Event</button>
-            </div>
             <Modal
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
