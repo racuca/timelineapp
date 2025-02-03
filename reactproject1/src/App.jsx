@@ -26,8 +26,6 @@ const App = () => {
     const svgRef = useRef();
     const containerRef = useRef(); // 스크롤 컨테이너 참조
     const zoomBehaviorRef = useRef();
-    //const baseWidth = 800; // 기본 타임라인 너비
-    //const baseEventSpacing = 200; // 이벤트 간 기본 간격
     const serverurl = "http://localhost:5001";
 
     useEffect(() => {
@@ -64,11 +62,11 @@ const App = () => {
         <div>
             <h1>Timeline History</h1>
             <UserList serverurl={serverurl} users={users} setUsers={setUsers} />
-            <div style={{ marginBottom: "10px" }}>
-                <button onClick={toggleDirection}>
+            <div style={{ margin: "10px" }}>
+                <button style={{ margin: "10px" }}  onClick={toggleDirection}>
                     Switch to {isVertical ? "Horizontal" : "Vertical"} Timeline
                 </button>
-                <button onClick={openModal}>Add Event</button>
+                <button style={{ margin: "10px" }}  onClick={openModal}>Add Event</button>
             </div>
             <Timeline svgRef={svgRef}
                 containerRef={containerRef}
