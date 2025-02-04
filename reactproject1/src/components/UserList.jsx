@@ -5,8 +5,8 @@ const UserList = ({ serverurl, users, setUsers }) => {
     const [name, setName] = useState("");
     const [passwd, setPasswd] = useState("");
     const [email, setEmail] = useState("");
-    const [loggedInUser, setLoggedInUser] = useState(null); // ·Î±×ÀÎÇÑ »ç¿ëÀÚ Á¤º¸
-    const [showProfile, setShowProfile] = useState(false); // ÇÁ·ÎÇÊ È­¸é Åä±Û
+    const [loggedInUser, setLoggedInUser] = useState(null); // ë¡œê·¸ì¸í•œ ì‚¬ìš©ì ì •ë³´
+    const [showProfile, setShowProfile] = useState(false); // í”„ë¡œí•„ í™”ë©´ í† ê¸€
 
     const handleAddUser = () => {
         const newUser = { name, passwd, email };
@@ -20,18 +20,18 @@ const UserList = ({ serverurl, users, setUsers }) => {
         });;
     };
 
-    // ·Î±×ÀÎ Ã³¸®
+    // ë¡œê·¸ì¸ ì²˜ë¦¬
     const handleLogin = () => {
         axios.post(serverurl + "/login", { email, passwd })
             .then((response) => {
-                setLoggedInUser(response.data); // ·Î±×ÀÎ Á¤º¸ ÀúÀå
+                setLoggedInUser(response.data); // ë¡œê·¸ì¸ ì •ë³´ ì €ì¥
             })
             .catch((error) => {
                 console.error("Login failed:", error);
             });
     };
 
-    // ·Î±×¾Æ¿ô Ã³¸®
+    // ë¡œê·¸ì•„ì›ƒ ì²˜ë¦¬
     const handleLogout = () => {
         setLoggedInUser(null);
         setShowProfile(false);
@@ -39,7 +39,7 @@ const UserList = ({ serverurl, users, setUsers }) => {
 
     return (
         <div style={{ padding: "20px", position: "relative" }}>
-            {/* »ó´Ü ³×ºñ°ÔÀÌ¼Ç */}
+            {/* ìƒë‹¨ ë„¤ë¹„ê²Œì´ì…˜ */}
             <div style={{ position: "absolute", top: "10px", right: "10px" }}>
                 {loggedInUser ? (
                     <div>
@@ -84,7 +84,7 @@ const UserList = ({ serverurl, users, setUsers }) => {
                 )}
             </div>
 
-            {/* À¯Àú ¸ñ·Ï */}
+            {/* ìœ ì € ëª©ë¡ */}
             <h2>User List</h2>
             <ul>
                 {users.map((user) => (
@@ -92,7 +92,7 @@ const UserList = ({ serverurl, users, setUsers }) => {
                 ))}
             </ul>
 
-            {/* »ç¿ëÀÚ Ãß°¡ 
+            {/* ì‚¬ìš©ì ì¶”ê°€ 
             <h2>Add User</h2>
             <input
                 type="text"

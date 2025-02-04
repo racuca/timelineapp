@@ -22,10 +22,10 @@ const App = () => {
     const [users, setUsers] = useState([]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isVertical, setIsVertical] = useState(false); // Å¸ÀÓ¶óÀÎ ¹æÇâ »óÅÂ Ãß°¡
+    const [isVertical, setIsVertical] = useState(false); // íƒ€ìž„ë¼ì¸ ë°©í–¥ ìƒíƒœ ì¶”ê°€
 
     const svgRef = useRef();
-    const containerRef = useRef(); // ½ºÅ©·Ñ ÄÁÅ×ÀÌ³Ê ÂüÁ¶
+    const containerRef = useRef(); // ìŠ¤í¬ë¡¤ ì»¨í…Œì´ë„ˆ ì°¸ì¡°
     const zoomBehaviorRef = useRef();
     const serverurl = "http://localhost:5001";
     const navigate = useNavigate(); // To handle navigation
@@ -39,7 +39,7 @@ const App = () => {
         .catch((error) => {
             console.error("Error fetching users:", error);
         });
-    }, []); // ºó ¹è¿­À» ³Ö¾î Ã³À½ ·»´õ¸µ ½Ã ÇÑ ¹ø¸¸ ½ÇÇà
+    }, []); // ë¹ˆ ë°°ì—´ì„ ë„£ì–´ ì²˜ìŒ ë Œë”ë§ ì‹œ í•œ ë²ˆë§Œ ì‹¤í–‰
     
     useEffect(() => {
         axios
@@ -47,16 +47,16 @@ const App = () => {
         .then((response) => {
             const sortedEvents = [...response.data].sort((a, b) => parseDate(a.createdt) - parseDate(b.createdt));
             if (JSON.stringify(events) !== JSON.stringify(sortedEvents)) {
-                setEvents(sortedEvents); // Á¤·ÄµÈ µ¥ÀÌÅÍ ÀúÀå
+                setEvents(sortedEvents); // ì •ë ¬ëœ ë°ì´í„° ì €ìž¥
             }
         })
         .catch((error) => {
             console.error("Error fetching events:", error);
         });
-    }, [events]); // ºó ¹è¿­À» ³Ö¾î Ã³À½ ·»´õ¸µ ½Ã ÇÑ ¹ø¸¸ ½ÇÇà
+    }, [events]); // ë¹ˆ ë°°ì—´ì„ ë„£ì–´ ì²˜ìŒ ë Œë”ë§ ì‹œ í•œ ë²ˆë§Œ ì‹¤í–‰
     
 
-    const toggleDirection = () => setIsVertical((prev) => !prev); // ¹æÇâ ÀüÈ¯ ÇÔ¼ö
+    const toggleDirection = () => setIsVertical((prev) => !prev); // ë°©í–¥ ì „í™˜ í•¨ìˆ˜
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
@@ -66,75 +66,47 @@ const App = () => {
     };
 
     return (
-            <div>
-
-
-                <Routes>
-                    {/* Main Page */}
-                    <Route
-                        path="/"
-                        element={
-                            <div>
-                                <div style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
-                                    <h1>Timeline History</h1>
-                                    <div style={{ alignSelf: "center" }}>
-                                        {loggedInUser ? (
-                                            <div>
-                                                <span>Welcome, {loggedInUser.name}</span>
-                                                <button onClick={handleLogout} style={{ marginLeft: "10px" }}>
-                                                    Logout
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <Link to="/login">
-                                                <button>Login</button>
-                                            </Link>
-                                        )}
+        <Routes>
+            {/* Main Page */}
+            <Route
+                path="/"
+                element={
+                    <div>
+                        <div style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
+                            <h1>Timeline History</h1>
+                            <div style={{ alignSelf: "center" }}>
+                                {loggedInUser ? (
+                                    <div>
+                                        <span>Welcome, {loggedInUser.name}</span>
+                                        <button onClick={handleLogout} style={{ marginLeft: "10px" }}>
+                                            Logout
+                                        </button>
                                     </div>
-                                </div>
-                                {/*<UserList serverurl={serverurl} users={users} setUsers={setUsers} />*/}
-                                <div style={{ margin: "10px" }}>
-                                    <button style={{ margin: "10px" }} onClick={toggleDirection}>
-                                        Switch to {isVertical ? "Horizontal" : "Vertical"} Timeline
-                                    </button>
-                                    <button style={{ margin: "10px" }} onClick={openModal}>
-                                        Add Event
-                                    </button>
-                                </div>
-                                <Timeline svgRef={svgRef} containerRef={containerRef} zoomBehaviorRef={zoomBehaviorRef} events={events} isVertical={isVertical} />
-                                <EventModal isModalOpen={isModalOpen} closeModal={closeModal} events={events} setEvents={setEvents} serverurl={serverurl} containerRef={containerRef} svgRef={svgRef} />
+                                ) : (
+                                    <Link to="/login">
+                                        <button>Login</button>
+                                    </Link>
+                                )}
                             </div>
-                        }
-                    />
-
-                    {/* Login Page */}
-                    <Route path="/login" element={<LoginPage serverurl={serverurl}  setLoggedInUser={setLoggedInUser} />} />
-                </Routes>
-            </div>
-        /*<div>
-            <UserList serverurl={serverurl} users={users} setUsers={setUsers} />
-            <h1>Timeline History</h1>
-            <div style={{ margin: "10px" }}>
-                <button style={{ margin: "10px" }}  onClick={toggleDirection}>
-                    Switch to {isVertical ? "Horizontal" : "Vertical"} Timeline
-                </button>
-                <button style={{ margin: "10px" }}  onClick={openModal}>Add Event</button>
-            </div>
-            <Timeline svgRef={svgRef}
-                containerRef={containerRef}
-                zoomBehaviorRef={zoomBehaviorRef}
-                events={events}
-                isVertical={isVertical}
+                        </div>
+                        {/*<UserList serverurl={serverurl} users={users} setUsers={setUsers} />*/}
+                        <div style={{ margin: "10px" }}>
+                            <button style={{ margin: "10px" }} onClick={toggleDirection}>
+                                Switch to {isVertical ? "Horizontal" : "Vertical"} Timeline
+                            </button>
+                            <button style={{ margin: "10px" }} onClick={openModal}>
+                                Add Event
+                            </button>
+                        </div>
+                        <Timeline svgRef={svgRef} containerRef={containerRef} zoomBehaviorRef={zoomBehaviorRef} events={events} isVertical={isVertical} />
+                        <EventModal isModalOpen={isModalOpen} closeModal={closeModal} events={events} setEvents={setEvents} serverurl={serverurl} containerRef={containerRef} svgRef={svgRef} />
+                    </div>
+                }
             />
-            <EventModal isModalOpen={isModalOpen}
-                closeModal={closeModal}
-                events={events}
-                setEvents={setEvents}
-                serverurl={serverurl}
-                containerRef={containerRef}
-                svgRef={svgRef}
-            />            
-        </div>*/
+
+            {/* Login Page */}
+            <Route path="/login" element={<LoginPage serverurl={serverurl}  setLoggedInUser={setLoggedInUser} />} />
+        </Routes>
     );
 };
 

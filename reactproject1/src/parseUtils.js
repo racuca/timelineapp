@@ -1,29 +1,29 @@
-// ½Ã°£¼ø Á¤·Ä
+// ì‹œê°„ìˆœ ì •ë ¬
 export const parseDate = (date) => {
     
     if (date.startsWith("BC ")) {
-        const parts = date.replace("BC ", "").split(/[- :]/); // "BC 0001-01-01 00:00:00" ¡æ ["0001", "01", "01", "00", "00", "00"]
-        const bcYear = -parseInt(parts[0], 10) + 1; // BC 1³âÀ» 0À¸·Î Ãë±ŞÇÏ±â À§ÇØ +1
-        const month = parseInt(parts[1], 10) - 1; // ¿ùÀº 0ºÎÅÍ ½ÃÀÛ
+        const parts = date.replace("BC ", "").split(/[- :]/); // "BC 0001-01-01 00:00:00" â†’ ["0001", "01", "01", "00", "00", "00"]
+        const bcYear = -parseInt(parts[0], 10) + 1; // BC 1ë…„ì„ 0ìœ¼ë¡œ ì·¨ê¸‰í•˜ê¸° ìœ„í•´ +1
+        const month = parseInt(parts[1], 10) - 1; // ì›”ì€ 0ë¶€í„° ì‹œì‘
         const day = parseInt(parts[2], 10);
         const hours = parseInt(parts[3], 10);
         const minutes = parseInt(parts[4], 10);
         const seconds = parseInt(parts[5], 10);
 
-        // BC ³¯Â¥¸¦ Á÷Á¢ °è»ê (¿¬µµ, ¿ù, ÀÏÀ» À½¼ö·Î Ã³¸®)
-        //const bcDate = new Date(0); // ±âÁØ: À¯´Ğ½º ¿¡Æ÷Å© (1970-01-01)
-        const bcDate = new Date(Date.UTC(0, 0, 1, 0, 0, 0)); // ±âÁØÁ¡: 0³â 1¿ù 1ÀÏ
-        bcDate.setUTCFullYear(bcYear); // À½¼ö ¿¬µµ¸¦ ¼öµ¿ ¼³Á¤
-        bcDate.setUTCMonth(month); // ¿ù ¼³Á¤
-        bcDate.setUTCDate(day); // ÀÏ ¼³Á¤
-        bcDate.setUTCHours(hours, minutes, seconds, 0); // ½Ã°£ ¼³Á¤
+        // BC ë‚ ì§œë¥¼ ì§ì ‘ ê³„ì‚° (ì—°ë„, ì›”, ì¼ì„ ìŒìˆ˜ë¡œ ì²˜ë¦¬)
+        //const bcDate = new Date(0); // ê¸°ì¤€: ìœ ë‹‰ìŠ¤ ì—í¬í¬ (1970-01-01)
+        const bcDate = new Date(Date.UTC(0, 0, 1, 0, 0, 0)); // ê¸°ì¤€ì : 0ë…„ 1ì›” 1ì¼
+        bcDate.setUTCFullYear(bcYear); // ìŒìˆ˜ ì—°ë„ë¥¼ ìˆ˜ë™ ì„¤ì •
+        bcDate.setUTCMonth(month); // ì›” ì„¤ì •
+        bcDate.setUTCDate(day); // ì¼ ì„¤ì •
+        bcDate.setUTCHours(hours, minutes, seconds, 0); // ì‹œê°„ ì„¤ì •
 
-        return bcDate.getTime(); // À¯´Ğ½º Å¸ÀÓ½ºÅÆÇÁ ¹İÈ¯
+        return bcDate.getTime(); // ìœ ë‹‰ìŠ¤ íƒ€ì„ìŠ¤íƒ¬í”„ ë°˜í™˜
     }
-    // AC (±â¿øÈÄ) ³¯Â¥ Ã³¸®
-    const parts = date.split(/[- :]/); // "0100-01-01 00:00:00" ¡æ ["0100", "01", "01", "00", "00", "00"]
-    const year = parseInt(parts[0], 10); // ¿¬µµ¸¦ Á¤¼ö·Î º¯È¯
-    const month = parseInt(parts[1], 10) - 1; // ¿ùÀº 0ºÎÅÍ ½ÃÀÛ
+    // AC (ê¸°ì›í›„) ë‚ ì§œ ì²˜ë¦¬
+    const parts = date.split(/[- :]/); // "0100-01-01 00:00:00" â†’ ["0100", "01", "01", "00", "00", "00"]
+    const year = parseInt(parts[0], 10); // ì—°ë„ë¥¼ ì •ìˆ˜ë¡œ ë³€í™˜
+    const month = parseInt(parts[1], 10) - 1; // ì›”ì€ 0ë¶€í„° ì‹œì‘
     const day = parseInt(parts[2], 10);
     const hours = parseInt(parts[3], 10);
     const minutes = parseInt(parts[4], 10);
@@ -36,5 +36,18 @@ export const parseDate = (date) => {
     acDate.setUTCHours(hours, minutes, seconds, 0);
 
     return acDate.getTime();
-    //return new Date(date).getTime(); // ÀÏ¹İ ³¯Â¥ Ã³¸®
+};
+
+export const convertDateToStr = (date) => {
+    if (date.startsWith("BC ")) {
+        const parts = date.replace("BC ", "").split(/[- :]/);
+        const bcYear = -parseInt(parts[0], 10) + 1; // BC 1ë…„ì„ 0ìœ¼ë¡œ ì·¨ê¸‰í•˜ê¸° ìœ„í•´ +1
+        console.log(parts, bcYear);
+
+        const res = "ê¸°ì›ì „ " + -bcYear + "ë…„";
+        console.log(res);
+        return res;
+    }
+
+    return date;
 };

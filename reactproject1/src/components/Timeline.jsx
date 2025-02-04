@@ -1,28 +1,29 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
+import { convertDateToStr }  from "../parseUtils";
 
 const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical }) => {
     const handleZoomIn = () => {
         const svg = d3.select(svgRef.current);
-        svg.transition().call(zoomBehaviorRef.current.scaleBy, 1.2); // 1.2¹è ÁÜ ÀÎ
+        svg.transition().call(zoomBehaviorRef.current.scaleBy, 1.2); // 1.2ë°° ì¤Œ ì¸
     };
 
     const handleZoomOut = () => {
         const svg = d3.select(svgRef.current);
-        svg.transition().call(zoomBehaviorRef.current.scaleBy, 0.8); // 0.8¹è ÁÜ ¾Æ¿ô
+        svg.transition().call(zoomBehaviorRef.current.scaleBy, 0.8); // 0.8ë°° ì¤Œ ì•„ì›ƒ
     };
 
     const handleZoomReset = () => {
         const svg = d3.select(svgRef.current);
-        svg.transition().call(zoomBehaviorRef.current.transform, d3.zoomIdentity); // ÃÊ±â »óÅÂ·Î ÁÜ ¸®¼Â
+        svg.transition().call(zoomBehaviorRef.current.transform, d3.zoomIdentity); // ì´ˆê¸° ìƒíƒœë¡œ ì¤Œ ë¦¬ì…‹
     };
-    const [selectedEvent, setSelectedEvent] = useState(null); // ¼±ÅÃµÈ ÀÌº¥Æ® Á¤º¸
+    const [selectedEvent, setSelectedEvent] = useState(null); // ì„ íƒëœ ì´ë²¤íŠ¸ ì •ë³´
 
-    const baseWidth = 800; // ±âº» Å¸ÀÓ¶óÀÎ ³Êºñ
-    const baseEventSpacing = 100; // ÀÌº¥Æ® °£ ±âº» °£°İ
+    const baseWidth = 800; // ê¸°ë³¸ íƒ€ì„ë¼ì¸ ë„ˆë¹„
+    const baseEventSpacing = 100; // ì´ë²¤íŠ¸ ê°„ ê¸°ë³¸ ê°„ê²©
     const [dynamicWidth, setDynamicWidth] = useState(window.innerWidth * 0.8);
 
-    // ÀÌº¥Æ® °³¼ö ±â¹İ ³»ºÎ SVG Å©±â °è»ê
+    // ì´ë²¤íŠ¸ ê°œìˆ˜ ê¸°ë°˜ ë‚´ë¶€ SVG í¬ê¸° ê³„ì‚°
     const eventCount = events.length;
     const innerWidth = Math.max(baseWidth, eventCount * baseEventSpacing + 100);
     const innerHeight = isVertical ? innerWidth : 540; 
@@ -39,13 +40,13 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
 
     useEffect(() => {
         const svg = d3.select(svgRef.current);
-        const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // Å¸ÀÓ¶óÀÎ ³Êºñ °è»ê
-        const width = isVertical ? dynamicWidth : size; // °¡·Î ¹æÇâÀÌ¸é ³Êºñ¸¦ ´Ã¸²
-        const height = isVertical ? size : 600; // ¼¼·Î ¹æÇâÀÌ¸é ³ôÀÌ¸¦ ´Ã¸²
+        const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // íƒ€ì„ë¼ì¸ ë„ˆë¹„ ê³„ì‚°
+        const width = isVertical ? dynamicWidth : size; // ê°€ë¡œ ë°©í–¥ì´ë©´ ë„ˆë¹„ë¥¼ ëŠ˜ë¦¼
+        const height = isVertical ? size : 600; // ì„¸ë¡œ ë°©í–¥ì´ë©´ ë†’ì´ë¥¼ ëŠ˜ë¦¼
         //console.log("useEffect", width, height);
 
         //svg.attr("width", width).attr("height", height).style("background", "#f9f9f9");
-        svg.attr("width", innerWidth) // ºÎ¸ğ div¿¡ ¸ÂÃã
+        svg.attr("width", innerWidth) // ë¶€ëª¨ divì— ë§ì¶¤
             .attr("height", innerHeight)
             .style("background", "#f9f9f9");
 
@@ -57,16 +58,16 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
 
         // Define zoom behavior
         const zoom = d3.zoom()
-            .scaleExtent([0.5, 3]) // ÃÖ¼Ò 0.5¹è, ÃÖ´ë 3¹è ÁÜ
+            .scaleExtent([0.5, 3]) // ìµœì†Œ 0.5ë°°, ìµœëŒ€ 3ë°° ì¤Œ
             .on("zoom", (event) => {
-                g.attr("transform", event.transform); // ±×·ì ¿ä¼Ò¿¡ º¯È¯ Àû¿ë
+                g.attr("transform", event.transform); // ê·¸ë£¹ ìš”ì†Œì— ë³€í™˜ ì ìš©
             });
 
-        svg.call(zoom); // SVG¿¡ ÁÜ ÀÌº¥Æ® ¿¬°á
+        svg.call(zoom); // SVGì— ì¤Œ ì´ë²¤íŠ¸ ì—°ê²°
         zoomBehaviorRef.current = zoom;
 
         // Draw the timeline
-        const linePos = isVertical ? width / 2 : height / 2; // ¼¼·Î/°¡·Î ¹æÇâ¿¡ µû¶ó ¼± À§Ä¡ ¼³Á¤
+        const linePos = isVertical ? width / 2 : height / 2; // ì„¸ë¡œ/ê°€ë¡œ ë°©í–¥ì— ë”°ë¼ ì„  ìœ„ì¹˜ ì„¤ì •
         g.append("line")
             .attr("x1", isVertical ? linePos : 50)
             .attr("y1", isVertical ? 50 : linePos)
@@ -88,7 +89,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                     })`
             
             ).on("click", (event, d) => {
-                setSelectedEvent(d); // ¹Ú½º¸¦ Å¬¸¯ÇÏ¸é ¼±ÅÃµÈ ÀÌº¥Æ® ¼³Á¤
+                setSelectedEvent(d); // ë°•ìŠ¤ë¥¼ í´ë¦­í•˜ë©´ ì„ íƒëœ ì´ë²¤íŠ¸ ì„¤ì •
             });
 
         // Add text and dynamically calculate box size
@@ -98,28 +99,28 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
             .attr("text-anchor", "left")
             .style("font-size", "12px");
 
-        // µÎ ÁÙ·Î ÅØ½ºÆ® Ãß°¡: Ã¹ ÁÙÀº d.createdt, µÑÂ° ÁÙÀº d.description
+        // ë‘ ì¤„ë¡œ í…ìŠ¤íŠ¸ ì¶”ê°€: ì²« ì¤„ì€ d.createdt, ë‘˜ì§¸ ì¤„ì€ d.description
         textElements.each(function (d, i) {
             const text = d3.select(this);
             text.append("tspan")
-                .text(d.createdt) // Ã¹ ¹øÂ° ÁÙ (³¯Â¥)
+                .text(convertDateToStr(d.createdt)) // ì²« ë²ˆì§¸ ì¤„ (ë‚ ì§œ)
                 .attr("x", isVertical ? (i % 2 === 0 ? -200 : 50) : 0)
                 .attr("dy", "0em")
                 .style("font-weight", "bold");
 
             text.append("tspan")
-                .text(d.title) // µÎ ¹øÂ° ÁÙ (Á¦¸ñ)
+                .text(d.title) // ë‘ ë²ˆì§¸ ì¤„ (ì œëª©)
                 .attr("x", isVertical ? (i % 2 === 0 ? -200 : 50) : 0)
                 .attr("dy", "1.5em")
                 .style("font-weight", "bold");
 
             text.append("tspan")
-                .text(d.description) // ¼¼ ¹øÂ° ÁÙ (¼³¸í)
+                .text(d.description) // ì„¸ ë²ˆì§¸ ì¤„ (ì„¤ëª…)
                 .attr("x", isVertical ? (i % 2 === 0 ? -200 : 50) : 0)
                 .attr("dy", "2em");
         });
 
-        // ¹Ú½º Ãß°¡
+        // ë°•ìŠ¤ ì¶”ê°€
         textElements.each(function (d, i) {
             const bbox = this.getBBox(); // Get text size dynamically
             const padding = 20;
@@ -131,18 +132,18 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 .attr("y", isVertical ? (i % 2 === 0 ? bbox.y-10 : bbox.y-10) : bbox.y-10)
                 .attr("width", bbox.width + padding)
                 .attr("height", bbox.height + padding)
-                .attr("rx", 4)  // ¸ğ¼­¸® radius
+                .attr("rx", 4)  // ëª¨ì„œë¦¬ radius
                 .attr("ry", 4)
                 .attr("fill", "white")
                 .attr("stroke", "steelblue")
                 .attr("stroke-width", 1.5)
                 .on("click", (event, d) => {
-                    setSelectedEvent(d); // ¹Ú½º¸¦ Å¬¸¯ÇÏ¸é ÀÌº¥Æ® Á¤º¸ ÀúÀå
+                    setSelectedEvent(d); // ë°•ìŠ¤ë¥¼ í´ë¦­í•˜ë©´ ì´ë²¤íŠ¸ ì •ë³´ ì €ì¥
                 })
                 .style("cursor", "pointer")
                 .lower(); // Send rectangle to the back
 
-            // Å¸ÀÓ¶óÀÎ°ú ¹Ú½º¸¦ ¿¬°áÇÏ´Â ¼± Ãß°¡
+            // íƒ€ì„ë¼ì¸ê³¼ ë°•ìŠ¤ë¥¼ ì—°ê²°í•˜ëŠ” ì„  ì¶”ê°€
             d3.select(this.parentNode)
                 .append("line")
                 .attr("x1", isVertical ? 0 : bbox.x)
@@ -163,9 +164,9 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 <button onClick={handleZoomReset}>Reset Zoom</button>
             </div>
             <div style={{
-                width: `${dynamicWidth}px`, // ºê¶ó¿ìÀú 80% Å©±â À¯Áö
-                height: "600px", // °íÁ¤ ³ôÀÌ (ÇÊ¿ä½Ã Á¶Á¤)
-                overflow: "auto", // ³»ºÎ°¡ ³ÑÄ¡¸é ½ºÅ©·Ñ »ı¼º
+                width: `${dynamicWidth}px`, // ë¸Œë¼ìš°ì € 80% í¬ê¸° ìœ ì§€
+                height: "600px", // ê³ ì • ë†’ì´ (í•„ìš”ì‹œ ì¡°ì •)
+                overflow: "auto", // ë‚´ë¶€ê°€ ë„˜ì¹˜ë©´ ìŠ¤í¬ë¡¤ ìƒì„±
                 border: "1px solid #ccc",
                 position: "relative"
             }}>

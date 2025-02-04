@@ -54,7 +54,7 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                 console.error("Error adding history:", error);
             });
 
-        // Å¸ÀÓ¶óÀÎ Å©±â¿Í ½ºÅ©·Ñ Á¶Á¤
+        // íƒ€ì„ë¼ì¸ í¬ê¸°ì™€ ìŠ¤í¬ë¡¤ ì¡°ì •
         setTimeout(() => {
             const container = containerRef.current;
             const svg = svgRef.current;
@@ -86,7 +86,7 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                 }}
             >
                 <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Add Event</h2>
-                {/* ³¯Â¥ ÀÔ·Â ÇÊµå */}
+                {/* ë‚ ì§œ ì…ë ¥ í•„ë“œ */}
                 <div style={{ display: "grid", gap: "10px" }}>
                     {[
                         { label: "Year", value: year, setValue: setYear, min: -9999, max: 9999 },
@@ -126,14 +126,14 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                     ))}
                 </div>
 
-                {/* BC Ã¼Å©¹Ú½º */}
+                {/* BC ì²´í¬ë°•ìŠ¤ */}
                 <div style={{ margin: "10px 0" }}>
                     <label>
                         <input type="checkbox" checked={isBC} onChange={handleToggleBC} /> BC
                     </label>
                 </div>
 
-                {/* Á¦¸ñ ÀÔ·Â */}
+                {/* ì œëª© ì…ë ¥ */}
                 <div style={{ marginBottom: "10px" }}>
                     <label>Title:</label>
                     <input
@@ -151,7 +151,7 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                     />
                 </div>
 
-                {/* ¼³¸í ÀÔ·Â */}
+                {/* ì„¤ëª… ì…ë ¥ */}
                 <div style={{ marginBottom: "10px" }}>
                     <label>Description:</label>
                     <textarea
@@ -169,7 +169,7 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                         }}
                     />
                 </div>
-                {/* ·¹º§ ¼±ÅÃ */}
+                {/* ë ˆë²¨ ì„ íƒ */}
                 <div style={{ marginBottom: "20px" }}>
                     <label>Level:</label>
                     <select
@@ -190,7 +190,7 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                         ))}
                     </select>
                 </div>
-                {/* ¹öÆ° ±×·ì */}
+                {/* ë²„íŠ¼ ê·¸ë£¹ */}
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <button
                         onClick={handleAddEvent}

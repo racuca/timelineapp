@@ -12,11 +12,11 @@ const LoginPage = ({ serverurl, setLoggedInUser }) => {
     const handleLogin = () => {
         axios.post(serverurl + "/login", { email, passwd })
             .then((response) => {
-                setLoggedInUser(response.data); // ·Î±×ÀÎ Á¤º¸ ÀúÀå
-                navigate("/"); // ¸ÞÀÎ ÆäÀÌÁö·Î ÀÌµ¿
+                setLoggedInUser(response.data); // ë¡œê·¸ì¸ ì •ë³´ ì €ìž¥
+                navigate("/"); // ë©”ì¸ íŽ˜ì´ì§€ë¡œ ì´ë™
             })
             .catch((error) => {
-                setError("·Î±×ÀÎ ½ÇÆÐ: ÀÌ¸ÞÀÏ ¶Ç´Â ºñ¹Ð¹øÈ£°¡ Æ²·È½À´Ï´Ù.");
+                setError("ë¡œê·¸ì¸ ì‹¤íŒ¨: ì´ë©”ì¼ ë˜ëŠ” ë¹„ë°€ë²ˆí˜¸ê°€ í‹€ë ¸ìŠµë‹ˆë‹¤.");
                 console.error("Login error:", error);
             });
     };
