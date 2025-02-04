@@ -47,7 +47,7 @@ const UserList = ({ serverurl, users, setUsers }) => {
                             style={{ cursor: "pointer", fontWeight: "bold" }}
                             onClick={() => setShowProfile(!showProfile)}
                         >
-                            {loggedInUser.name} ¡å
+                            {loggedInUser.name}
                         </span>
                         {showProfile && (
                             <div style={{

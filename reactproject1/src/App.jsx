@@ -1,11 +1,12 @@
 import React, { useRef, useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "react-modal";
-import * as d3 from "d3";
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
 import { parseDate } from "./parseUtils";
 import UserList from "./components/UserList"
 import Timeline from "./components/Timeline";
 import EventModal from "./components/EventModal";
+import LoginPage from "./LoginPage";
 import "./App.css";
 
 Modal.setAppElement("#root");
@@ -17,18 +18,19 @@ const App = () => {
         //{ id: 3, date: "BC 0100-01-01 00:00:00", description: "BC 100", level:0 },
     ]);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const [loggedInUser, setLoggedInUser] = useState(null); // To track logged-in user
     const [users, setUsers] = useState([]);
-        
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [isVertical, setIsVertical] = useState(false); // 타임라인 방향 상태 추가
 
     const svgRef = useRef();
     const containerRef = useRef(); // 스크롤 컨테이너 참조
     const zoomBehaviorRef = useRef();
     const serverurl = "http://localhost:5001";
+    const navigate = useNavigate(); // To handle navigation
 
-    useEffect(() => {
+    /*useEffect(() => {
         axios
         .get(serverurl + "/users")
         .then((response) => {
@@ -52,14 +54,67 @@ const App = () => {
             console.error("Error fetching events:", error);
         });
     }, [events]); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
+    */
+    useEffect(() => {
+        axios.get(serverurl + "/users").then((response) => setUsers(response.data)).catch(console.error);
+        axios.get(serverurl + "/events").then((response) => setEvents(response.data)).catch(console.error);
+    }, []);
 
     const toggleDirection = () => setIsVertical((prev) => !prev); // 방향 전환 함수
-
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
+    const handleLogout = () => {
+        setLoggedInUser(null); // Clear user data
+        navigate("/"); // Redirect to home page after logout
+    };
+
     return (
-        <div>
+            <div>
+                <div style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
+                    <h1>Timeline History</h1>
+                    <div style={{ alignSelf: "center" }}>
+                        {loggedInUser ? (
+                            <div>
+                                <span>Welcome, {loggedInUser.name}</span>
+                                <button onClick={handleLogout} style={{ marginLeft: "10px" }}>
+                                    Logout
+                                </button>
+                            </div>
+                        ) : (
+                            <Link to="/login">
+                                <button>Login</button>
+                            </Link>
+                        )}
+                    </div>
+                </div>
+
+                <Routes>
+                    {/* Main Page */}
+                    <Route
+                        path="/"
+                        element={
+                            <div>
+                                {/*<UserList serverurl={serverurl} users={users} setUsers={setUsers} />*/}
+                                <div style={{ margin: "10px" }}>
+                                    <button style={{ margin: "10px" }} onClick={toggleDirection}>
+                                        Switch to {isVertical ? "Horizontal" : "Vertical"} Timeline
+                                    </button>
+                                    <button style={{ margin: "10px" }} onClick={openModal}>
+                                        Add Event
+                                    </button>
+                                </div>
+                                <Timeline svgRef={svgRef} containerRef={containerRef} zoomBehaviorRef={zoomBehaviorRef} events={events} isVertical={isVertical} />
+                                <EventModal isModalOpen={isModalOpen} closeModal={closeModal} events={events} setEvents={setEvents} serverurl={serverurl} containerRef={containerRef} svgRef={svgRef} />
+                            </div>
+                        }
+                    />
+
+                    {/* Login Page */}
+                    <Route path="/login" element={<LoginPage serverurl={serverurl}  setLoggedInUser={setLoggedInUser} />} />
+                </Routes>
+            </div>
+        /*<div>
             <UserList serverurl={serverurl} users={users} setUsers={setUsers} />
             <h1>Timeline History</h1>
             <div style={{ margin: "10px" }}>
@@ -82,7 +137,7 @@ const App = () => {
                 containerRef={containerRef}
                 svgRef={svgRef}
             />            
-        </div>
+        </div>*/
     );
 };
 
