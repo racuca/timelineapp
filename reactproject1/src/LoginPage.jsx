@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./LoginPage.css"; // Import the CSS for styling
 
 const LoginPage = ({ serverurl, setLoggedInUser }) => {
     const [email, setEmail] = useState("");
@@ -21,12 +22,43 @@ const LoginPage = ({ serverurl, setLoggedInUser }) => {
     };
 
     return (
-        <div style={{ textAlign: "center", marginTop: "100px" }}>
+        /*<div style={{ textAlign: "center", marginTop: "100px" }}>
             <h2>Login</h2>
             {error && <p style={{ color: "red" }}>{error}</p>}
             <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
             <input type="password" placeholder="Password" value={passwd} onChange={(e) => setPasswd(e.target.value)} />
             <button onClick={handleLogin}>Login</button>
+        </div>*/
+        <div className="login-container">
+            <div className="login-form">
+                <h2 className="login-title">Login</h2>
+                <div className="input-group">
+                    <label htmlFor="email">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        autoFocus
+                        required
+                    />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        value={passwd}
+                        onChange={(e) => setPasswd(e.target.value)}
+                        placeholder="Enter your password"
+                        required
+                    />
+                </div>
+                <button className="login-button" onClick={handleLogin}>
+                    Log In
+                </button>
+            </div>
         </div>
     );
 };

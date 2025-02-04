@@ -78,6 +78,7 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                     content: {
                         maxWidth: "480px",
                         margin: "auto",
+                        marginBottom: "0px",                        
                         padding: "20px",
                         borderRadius: "10px",
                         boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",

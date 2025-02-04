@@ -30,7 +30,7 @@ const App = () => {
     const serverurl = "http://localhost:5001";
     const navigate = useNavigate(); // To handle navigation
 
-    /*useEffect(() => {
+    useEffect(() => {
         axios
         .get(serverurl + "/users")
         .then((response) => {
@@ -54,11 +54,7 @@ const App = () => {
             console.error("Error fetching events:", error);
         });
     }, [events]); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
-    */
-    useEffect(() => {
-        axios.get(serverurl + "/users").then((response) => setUsers(response.data)).catch(console.error);
-        axios.get(serverurl + "/events").then((response) => setEvents(response.data)).catch(console.error);
-    }, []);
+    
 
     const toggleDirection = () => setIsVertical((prev) => !prev); // 방향 전환 함수
     const openModal = () => setIsModalOpen(true);
@@ -71,23 +67,7 @@ const App = () => {
 
     return (
             <div>
-                <div style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
-                    <h1>Timeline History</h1>
-                    <div style={{ alignSelf: "center" }}>
-                        {loggedInUser ? (
-                            <div>
-                                <span>Welcome, {loggedInUser.name}</span>
-                                <button onClick={handleLogout} style={{ marginLeft: "10px" }}>
-                                    Logout
-                                </button>
-                            </div>
-                        ) : (
-                            <Link to="/login">
-                                <button>Login</button>
-                            </Link>
-                        )}
-                    </div>
-                </div>
+
 
                 <Routes>
                     {/* Main Page */}
@@ -95,6 +75,23 @@ const App = () => {
                         path="/"
                         element={
                             <div>
+                                <div style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
+                                    <h1>Timeline History</h1>
+                                    <div style={{ alignSelf: "center" }}>
+                                        {loggedInUser ? (
+                                            <div>
+                                                <span>Welcome, {loggedInUser.name}</span>
+                                                <button onClick={handleLogout} style={{ marginLeft: "10px" }}>
+                                                    Logout
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <Link to="/login">
+                                                <button>Login</button>
+                                            </Link>
+                                        )}
+                                    </div>
+                                </div>
                                 {/*<UserList serverurl={serverurl} users={users} setUsers={setUsers} />*/}
                                 <div style={{ margin: "10px" }}>
                                     <button style={{ margin: "10px" }} onClick={toggleDirection}>
