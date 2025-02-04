@@ -87,17 +87,17 @@ app.get("/events", (req, res) => {
 // bc = (0 : AC, 1 : BC), 
 // level = (0~10 0 is top important event. 10 is most detail misc event.user event)
 app.post("/events", (req, res) => {
-    const { createdt, title, description, level } = req.body.newEvent;
+    const { createdt, title, description, level, userid } = req.body.newEvent;
     db.query(
-        "INSERT INTO historyinfo (createdt, title, description, level) VALUES (?, ?, ?, ?)",
-        [createdt, title, description, level],
+        "INSERT INTO historyinfo (createdt, title, description, level, userid) VALUES (?, ?, ?, ?, ?)",
+        [createdt, title, description, level, userid],
         (err, results) => {
             if (err) {
                 console.error("Error adding event:", err);
                 res.status(500).json({ error: "Database error" });
             } else {
                 //console.log("add event", results);
-                res.json({ id: results.insertId, createdt, title, description, level });
+                res.json({ id: results.insertId, createdt, title, description, level, userid });
             }
         }
     );

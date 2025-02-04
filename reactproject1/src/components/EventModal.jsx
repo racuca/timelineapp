@@ -33,6 +33,7 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
             title: newEventTitle,
             description: newEventDescription,
             level: newEventLevel || 0,
+            userid: 1
         };
 
         setEvents((prevEvents) => {
@@ -65,56 +66,6 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
         closeModal();
     };
 
-
-    const handleAdd = (type) => {
-        switch (type) {
-            case "year":
-                setYear((prev) => (isBC && prev > 1 ? prev - 1 : prev + 1));
-                break;
-            case "month":
-                setMonth((prev) => (prev < 12 ? prev + 1 : 1));
-                break;
-            case "day":
-                setDay((prev) => (prev < 31 ? prev + 1 : 1));
-                break;
-            case "hour":
-                setHour((prev) => (prev < 23 ? prev + 1 : 0));
-                break;
-            case "minute":
-                setMinute((prev) => (prev < 59 ? prev + 1 : 0));
-                break;
-            case "second":
-                setSecond((prev) => (prev < 59 ? prev + 1 : 0));
-                break;
-            default:
-                break;
-        }
-    };
-
-    const handleSubtract = (type) => {
-        switch (type) {
-            case "year":
-                setYear((prev) => (isBC ? prev + 1 : Math.max(prev - 1, 0)));
-                break;
-            case "month":
-                setMonth((prev) => (prev > 1 ? prev - 1 : 12));
-                break;
-            case "day":
-                setDay((prev) => (prev > 1 ? prev - 1 : 31));
-                break;
-            case "hour":
-                setHour((prev) => (prev > 0 ? prev - 1 : 23));
-                break;
-            case "minute":
-                setMinute((prev) => (prev > 0 ? prev - 1 : 59));
-                break;
-            case "second":
-                setSecond((prev) => (prev > 0 ? prev - 1 : 59));
-                break;
-            default:
-                break;
-        }
-    };
     const handleToggleBC = () => setIsBC((prev) => !prev);
 
     return (
@@ -125,101 +76,111 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                 contentLabel="Add Event"
                 style={{
                     content: {
-                        maxWidth: "400px",
+                        maxWidth: "480px",
                         margin: "auto",
                         padding: "20px",
+                        borderRadius: "10px",
+                        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
                     },
                 }}
             >
-                <h2>Add Event</h2>
-                <div>
-                    <label>Year: </label>
-                    <button onClick={() => handleSubtract("year")}>-</button>
-                    <input
-                        type="number"
-                        value={year}
-                        onChange={(e) => setYear(Number(e.target.value))}
-                    />
-                    <button onClick={() => handleAdd("year")}>+</button>
+                <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Add Event</h2>
+                {/* 날짜 입력 필드 */}
+                <div style={{ display: "grid", gap: "10px" }}>
+                    {[
+                        { label: "Year", value: year, setValue: setYear, min: -9999, max: 9999 },
+                        { label: "Month", value: month, setValue: setMonth, min: 1, max: 12 },
+                        { label: "Day", value: day, setValue: setDay, min: 1, max: 31 },
+                        { label: "Hour", value: hour, setValue: setHour, min: 0, max: 23 },
+                        { label: "Minute", value: minute, setValue: setMinute, min: 0, max: 59 },
+                        { label: "Second", value: second, setValue: setSecond, min: 0, max: 59 },
+                    ].map(({ label, value, setValue, min, max }) => (
+                        <div key={label} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <label style={{ width: "80px" }}>{label}:</label>
+                            <button
+                                onClick={() => setValue(Math.max(value - 1, min))}
+                                style={{ padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}
+                            >
+                                -
+                            </button>
+                            <input
+                                type="number"
+                                value={value}
+                                onChange={(e) => setValue(Math.min(Math.max(Number(e.target.value), min), max))}
+                                style={{
+                                    width: "60px",
+                                    textAlign: "center",
+                                    padding: "5px",
+                                    borderRadius: "5px",
+                                    border: "1px solid #ccc",
+                                }}
+                            />
+                            <button
+                                onClick={() => setValue(Math.min(value + 1, max))}
+                                style={{ padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}
+                            >
+                                +
+                            </button>
+                        </div>
+                    ))}
                 </div>
-                <div>
-                    <label>Month: </label>
-                    <button onClick={() => handleSubtract("month")}>-</button>
-                    <input
-                        type="number"
-                        value={month}
-                        onChange={(e) => setMonth(Math.min(Math.max(Number(e.target.value), 1), 12))}
-                    />
-                    <button onClick={() => handleAdd("month")}>+</button>
-                </div>
-                <div>
-                    <label>Day: </label>
-                    <button onClick={() => handleSubtract("day")}>-</button>
-                    <input
-                        type="number"
-                        value={day}
-                        onChange={(e) => setDay(Math.min(Math.max(Number(e.target.value), 1), 31))}
-                    />
-                    <button onClick={() => handleAdd("day")}>+</button>
-                </div>
-                <div>
-                    <label>Hour: </label>
-                    <button onClick={() => handleSubtract("hour")}>-</button>
-                    <input
-                        type="number"
-                        value={hour}
-                        onChange={(e) => setHour(Math.min(Math.max(Number(e.target.value), 0), 23))}
-                    />
-                    <button onClick={() => handleAdd("hour")}>+</button>
-                </div>
-                <div>
-                    <label>Minute: </label>
-                    <button onClick={() => handleSubtract("minute")}>-</button>
-                    <input
-                        type="number"
-                        value={minute}
-                        onChange={(e) => setMinute(Math.min(Math.max(Number(e.target.value), 0), 59))}
-                    />
-                    <button onClick={() => handleAdd("minute")}>+</button>
-                </div>
-                <div>
-                    <label>Second: </label>
-                    <button onClick={() => handleSubtract("second")}>-</button>
-                    <input
-                        type="number"
-                        value={second}
-                        onChange={(e) => setSecond(Math.min(Math.max(Number(e.target.value), 0), 59))}
-                    />
-                    <button onClick={() => handleAdd("second")}>+</button>
-                </div>
-                <div>
+
+                {/* BC 체크박스 */}
+                <div style={{ margin: "10px 0" }}>
                     <label>
                         <input type="checkbox" checked={isBC} onChange={handleToggleBC} /> BC
                     </label>
                 </div>
-                <div>
-                    <label>Title: </label>
+
+                {/* 제목 입력 */}
+                <div style={{ marginBottom: "10px" }}>
+                    <label>Title:</label>
                     <input
                         type="text"
                         value={newEventTitle}
                         onChange={(e) => setNewEventTitle(e.target.value)}
-                        placeholder="Title"
+                        placeholder="Enter title"
+                        style={{
+                            width: "100%",
+                            padding: "10px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                            boxSizing: "border-box",
+                        }}
                     />
                 </div>
-                <div>
-                    <label>Description: </label>
-                    <input
-                        type="text"
+
+                {/* 설명 입력 */}
+                <div style={{ marginBottom: "10px" }}>
+                    <label>Description:</label>
+                    <textarea
                         value={newEventDescription}
                         onChange={(e) => setNewEventDescription(e.target.value)}
-                        placeholder="description"
+                        placeholder="Enter description"
+                        rows={4}
+                        style={{
+                            width: "100%",
+                            padding: "10px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                            resize: "vertical",
+                            boxSizing: "border-box",
+                        }}
                     />
                 </div>
-                <div>
-                    <label>Level: </label>
+                {/* 레벨 선택 */}
+                <div style={{ marginBottom: "20px" }}>
+                    <label>Level:</label>
                     <select
                         value={newEventLevel}
                         onChange={(e) => setNewEventLevel(Number(e.target.value))}
+                        style={{
+                            width: "100%",
+                            padding: "10px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                            boxSizing: "border-box",
+                        }}
                     >
                         {[...Array(11).keys()].map((level) => (
                             <option key={level} value={level}>
@@ -228,8 +189,37 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                         ))}
                     </select>
                 </div>
-                <button onClick={handleAddEvent}>Add Event</button>
-                <button onClick={closeModal}>Cancel</button>
+                {/* 버튼 그룹 */}
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <button
+                        onClick={handleAddEvent}
+                        style={{
+                            flex: 1,
+                            padding: "10px",
+                            borderRadius: "5px",
+                            backgroundColor: "#007bff",
+                            color: "white",
+                            border: "none",
+                            cursor: "pointer",
+                            marginRight: "10px",
+                        }}
+                    >
+                        Add Event
+                    </button>
+                    <button
+                        onClick={closeModal}
+                        style={{
+                            flex: 1,
+                            padding: "10px",
+                            borderRadius: "5px",
+                            backgroundColor: "#ccc",
+                            border: "none",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Cancel
+                    </button>
+                </div>                
             </Modal>
         </div>
     );

@@ -16,6 +16,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
         const svg = d3.select(svgRef.current);
         svg.transition().call(zoomBehaviorRef.current.transform, d3.zoomIdentity); // 초기 상태로 줌 리셋
     };
+    const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 정보
 
     const baseWidth = 800; // 기본 타임라인 너비
     const baseEventSpacing = 200; // 이벤트 간 기본 간격
@@ -86,7 +87,10 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 (d, i) =>
                     `translate(${isVertical ? linePos : 50 + i * baseEventSpacing}, ${isVertical ? 50 + i * baseEventSpacing : linePos
                     })`
-            );
+            
+            ).on("click", (event, d) => {
+                setSelectedEvent(d); // 박스를 클릭하면 선택된 이벤트 설정
+            });
 
         // Add text and dynamically calculate box size
         const textElements = eventGroups.append("text")
@@ -102,12 +106,18 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 .text(d.createdt) // 첫 번째 줄 (날짜)
                 .attr("x", isVertical ? (i % 2 === 0 ? -200 : 50) : 0)
                 .attr("dy", "0em")
-                .style("font-weight", "bold"); // 날짜 강조
+                .style("font-weight", "bold");
 
             text.append("tspan")
-                .text(d.description) // 두 번째 줄 (설명)
+                .text(d.title) // 두 번째 줄 (제목)
                 .attr("x", isVertical ? (i % 2 === 0 ? -200 : 50) : 0)
-                .attr("dy", "1.5em");
+                .attr("dy", "1.5em")
+                .style("font-weight", "bold");
+
+            text.append("tspan")
+                .text(d.description) // 세 번째 줄 (설명)
+                .attr("x", isVertical ? (i % 2 === 0 ? -200 : 50) : 0)
+                .attr("dy", "2em");
         });
 
         // 박스 추가
@@ -127,6 +137,10 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 .attr("fill", "white")
                 .attr("stroke", "steelblue")
                 .attr("stroke-width", 1.5)
+                .on("click", (event, d) => {
+                    setSelectedEvent(d); // 박스를 클릭하면 이벤트 정보 저장
+                })
+                .style("cursor", "pointer")
                 .lower(); // Send rectangle to the back
 
             // 타임라인과 박스를 연결하는 선 추가
@@ -158,6 +172,25 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
             }}>
                 <svg ref={svgRef}></svg>
             </div>
+            {selectedEvent && (
+                <div style={{
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    background: "white",
+                    padding: "20px",
+                    boxShadow: "0px 0px 10px rgba(0,0,0,0.3)",
+                    zIndex: 1000,
+                    minWidth: "300px",
+                    textAlign: "center"
+                }}>
+                    <h2>{selectedEvent.createdt}</h2>
+                    <p>{selectedEvent.title}</p>
+                    <p>{selectedEvent.description}</p>
+                    <button onClick={() => setSelectedEvent(null)}>Close</button>
+                </div>
+            )}
         </div>
     );
 };
