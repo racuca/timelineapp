@@ -19,13 +19,13 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 정보
 
     const baseWidth = 800; // 기본 타임라인 너비
-    const baseEventSpacing = 200; // 이벤트 간 기본 간격
+    const baseEventSpacing = 100; // 이벤트 간 기본 간격
     const [dynamicWidth, setDynamicWidth] = useState(window.innerWidth * 0.8);
 
     // 이벤트 개수 기반 내부 SVG 크기 계산
     const eventCount = events.length;
-    const innerWidth = Math.max(baseWidth, eventCount * baseEventSpacing);
-    const innerHeight = isVertical ? innerWidth : 600; 
+    const innerWidth = Math.max(baseWidth, eventCount * baseEventSpacing + 100);
+    const innerHeight = isVertical ? innerWidth : 540; 
 
     useEffect(() => {
         const handleResize = () => {
@@ -42,12 +42,11 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
         const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
         const width = isVertical ? dynamicWidth : size; // 가로 방향이면 너비를 늘림
         const height = isVertical ? size : 600; // 세로 방향이면 높이를 늘림
-        console.log("useeffect", width, height);
+        //console.log("useEffect", width, height);
 
         //svg.attr("width", width).attr("height", height).style("background", "#f9f9f9");
         svg.attr("width", innerWidth) // 부모 div에 맞춤
             .attr("height", innerHeight)
-            //.attr("viewBox", `0 0 ${innerWidth} ${innerHeight}`) // 내부 크기 동적 조정
             .style("background", "#f9f9f9");
 
         // Clear previous elements

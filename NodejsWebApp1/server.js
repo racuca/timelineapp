@@ -11,6 +11,7 @@ http.createServer(function (req, res) {
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
+const bodyParser = require("body-parser");
 
 const app = express();
 const port = 5001;
@@ -18,6 +19,8 @@ const port = 5001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+let users = [];
 
 // MariaDB connection
 const db = mysql.createConnection({
@@ -38,14 +41,15 @@ db.connect((err) => {
 
 // Get all users
 app.get("/users", (req, res) => {
+    console.log("Fetching users from database...");
     
     db.query("SELECT * FROM userdb", (err, results) => {
         if (err) {
             console.error("Error fetching users:", err);
             res.status(500).json({ error: "Database error" });
         } else {
-            console.log("users query", results);
-            res.json(results);
+            users = results;
+            res.json(users);
         }
     });    
 
@@ -54,20 +58,53 @@ app.get("/users", (req, res) => {
 // Add a new user
 app.post("/users", (req, res) => {
     const { name, passwd, email } = req.body;
+
+    // 유효성 검사
+    if (!name || !passwd || !email) {
+        return res.status(400).json({ message: "모든 필드를 입력하세요." });
+    }
+
     db.query(
         "INSERT INTO userdb (name, passwd, email) VALUES (?, ?, ?)",
-        [name, passwd, email],
-        (err, results) => {
+        [name, passwd, email], (err, results) => {
             if (err) {
                 console.error("Error adding user:", err);
-                res.status(500).json({ error: "Database error" });
-            } else {
-                //console.log("user added", results);
-                res.json({ id: results.insertId, name, passwd, email });
-            }
+                return res.status(500).json({ error: "Database error" });
+            } 
+            // 새 사용자 추가 후 DB에서 다시 조회하여 users 업데이트
+            db.query("SELECT * FROM userdb", (err, updatedResults) => {
+                if (err) {
+                    console.error("? Error fetching updated users:", err);
+                    return res.status(500).json({ error: "Database error" });
+                }
+
+                users = updatedResults;
+                console.log("? User added and users updated:", users);
+                res.json(updatedResults);
+            });
         }
     );
 });
+
+// 로그인 (POST /login)
+app.post("/login", (req, res) => {
+    const { email, passwd } = req.body;
+
+    const sql = "SELECT * FROM userdb WHERE email = ? AND passwd = ?";
+    db.query(sql, [email, passwd], (err, results) => {
+        if (err) {
+            console.error("? Error during login:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+
+        if (results.length > 0) {
+            res.json({ id: results[0].id, name: results[0].name, email: results[0].email });
+        } else {
+            res.status(401).json({ message: "로그인 실패: 이메일 또는 비밀번호가 틀렸습니다." });
+        }
+    });
+});
+
 
 // Get all events
 app.get("/events", (req, res) => {

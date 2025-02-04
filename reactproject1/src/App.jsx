@@ -38,7 +38,7 @@ const App = () => {
             console.error("Error fetching users:", error);
         });
     }, []); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
-
+    
     useEffect(() => {
         axios
         .get(serverurl + "/events")
@@ -60,8 +60,8 @@ const App = () => {
 
     return (
         <div>
-            <h1>Timeline History</h1>
             <UserList serverurl={serverurl} users={users} setUsers={setUsers} />
+            <h1>Timeline History</h1>
             <div style={{ margin: "10px" }}>
                 <button style={{ margin: "10px" }}  onClick={toggleDirection}>
                     Switch to {isVertical ? "Horizontal" : "Vertical"} Timeline
