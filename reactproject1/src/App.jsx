@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "react-modal";
+import Cookies from "js-cookie";
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
 import { parseDate } from "./parseUtils";
 import UserList from "./components/UserList"
@@ -8,6 +9,10 @@ import Timeline from "./components/Timeline";
 import EventModal from "./components/EventModal";
 import LoginPage from "./LoginPage";
 import "./App.css";
+
+// npm install 
+// react - modal react-router-dom js-cookie
+
 
 Modal.setAppElement("#root");
 
@@ -19,7 +24,7 @@ const App = () => {
     ]);
 
     const [loggedInUser, setLoggedInUser] = useState(null); // To track logged-in user
-    const [users, setUsers] = useState([]);
+    //const [users, setUsers] = useState([]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isVertical, setIsVertical] = useState(false); // 타임라인 방향 상태 추가
@@ -30,15 +35,29 @@ const App = () => {
     const serverurl = "http://localhost:5001";
     const navigate = useNavigate(); // To handle navigation
 
+
     useEffect(() => {
-        axios
+        /*axios
         .get(serverurl + "/users")
         .then((response) => {
             setUsers(response.data);
         })
         .catch((error) => {
             console.error("Error fetching users:", error);
-        });
+        });*/
+        const storedUser = Cookies.get("user")
+        if (storedUser) {
+            setLoggedInUser(JSON.parse(storedUser));
+        }
+
+        /*axios
+            .get(`${serverurl}/check-auth`, { withCredentials: true }) // 로그인 여부 확인
+            .then((response) => {
+                setLoggedInUser(response.data); // 로그인 유지
+            })
+            .catch(() => {
+                setLoggedInUser(null);
+            });*/
     }, []); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
     
     useEffect(() => {
@@ -61,6 +80,7 @@ const App = () => {
     const closeModal = () => setIsModalOpen(false);
 
     const handleLogout = () => {
+        Cookies.remove("user");
         setLoggedInUser(null); // Clear user data
         navigate("/"); // Redirect to home page after logout
     };
