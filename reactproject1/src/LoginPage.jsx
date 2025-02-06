@@ -10,21 +10,35 @@ const LoginPage = ({ serverurl, setLoggedInUser }) => {
     const [error, setError] = useState("");
     const navigate = useNavigate();    
 
-    const handleLogin = () => {
-        console.log(email, passwd);
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError(null);
+
         try {
-            axios.post(
-                serverurl + "/login",
+            // 쿠키 포함 요청
+            const response = await axios.post(serverurl + "/login",
                 { email, passwd },
-                { withCredentials: true } // 쿠키 포함 요청
-            ).then((response) => {
+                {
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8",
+                        "Accept": "application/json",
+                    },
+                    withCredentials: true,
+                    validateStatus: () => true
+                });
+            console.log(response);
+            if (response.status == 200 && response.data.success == true) {
+                console.log("login success", response.data);
                 Cookies.set("user", JSON.stringify(response.data), { expires: 7 });
                 setLoggedInUser(response.data); // 로그인 성공 시 상태 업데이트
                 navigate("/"); // 홈으로 이동
-            });
+            }
+            else {
+                setError(response.data.message);
+            }
 
         } catch (error) {
-            setError("로그인 실패: 이메일 또는 비밀번호가 잘못되었습니다.");
+            setError("서버 오류가 발생했습니다. 잠시후 다시 시도해 주세요.");
             console.error("❌ 로그인 에러:", error);
         }
     };
@@ -59,7 +73,7 @@ const LoginPage = ({ serverurl, setLoggedInUser }) => {
                 <button className="login-button" onClick={handleLogin}>
                     Log In
                 </button>
-                {error && <p style={{ color: "red" }}>{error}</p>}
+                {error && <p style={{ color: "red" }}>{error}</p>}                
             </div>
         </div>
     );

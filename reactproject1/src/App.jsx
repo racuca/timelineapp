@@ -4,10 +4,10 @@ import Modal from "react-modal";
 import Cookies from "js-cookie";
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
 import { parseDate } from "./parseUtils";
-import UserList from "./components/UserList"
 import Timeline from "./components/Timeline";
 import EventModal from "./components/EventModal";
 import LoginPage from "./LoginPage";
+import SignUpPage from "./SignUpPage";
 import "./App.css";
 
 // npm install 
@@ -24,8 +24,7 @@ const App = () => {
     ]);
 
     const [loggedInUser, setLoggedInUser] = useState(null); // To track logged-in user
-    //const [users, setUsers] = useState([]);
-
+    
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isVertical, setIsVertical] = useState(false); // 타임라인 방향 상태 추가
 
@@ -37,27 +36,11 @@ const App = () => {
 
 
     useEffect(() => {
-        /*axios
-        .get(serverurl + "/users")
-        .then((response) => {
-            setUsers(response.data);
-        })
-        .catch((error) => {
-            console.error("Error fetching users:", error);
-        });*/
-        const storedUser = Cookies.get("user")
+        const storedUser = Cookies.get("user");        
+        console.log(storedUser);
         if (storedUser) {
             setLoggedInUser(JSON.parse(storedUser));
         }
-
-        /*axios
-            .get(`${serverurl}/check-auth`, { withCredentials: true }) // 로그인 여부 확인
-            .then((response) => {
-                setLoggedInUser(response.data); // 로그인 유지
-            })
-            .catch(() => {
-                setLoggedInUser(null);
-            });*/
     }, []); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
     
     useEffect(() => {
@@ -103,13 +86,17 @@ const App = () => {
                                         </button>
                                     </div>
                                 ) : (
+                                    <div style={{ display: "flex", gap: "10px" }}>
                                     <Link to="/login">
                                         <button>Login</button>
                                     </Link>
+                                    <Link to="/signup">
+                                        <button style={{ marginLeft: "10px" }}>Sign Up</button>
+                                    </Link>
+                                    </div>
                                 )}
                             </div>
                         </div>
-                        {/*<UserList serverurl={serverurl} users={users} setUsers={setUsers} />*/}
                         <div style={{ margin: "10px" }}>
                             <button style={{ margin: "10px" }} onClick={toggleDirection}>
                                 Switch to {isVertical ? "Horizontal" : "Vertical"} Timeline
@@ -125,7 +112,9 @@ const App = () => {
             />
 
             {/* Login Page */}
-            <Route path="/login" element={<LoginPage serverurl={serverurl}  setLoggedInUser={setLoggedInUser} />} />
+            <Route path="/login" element={<LoginPage serverurl={serverurl} setLoggedInUser={setLoggedInUser} />} />
+            {/* Signup Page */}
+            <Route path="/signup" element={<SignUpPage serverurl={serverurl} />} />
         </Routes>
     );
 };

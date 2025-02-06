@@ -26,21 +26,23 @@ const port = 5001;
 
 // Middleware
 //app.use(cors());
-// ÄíÅ° Çã¿ë
+// ì¿ í‚¤ í—ˆìš©
 app.use(cors({ origin: "http://localhost:62684", credentials: true }));  
-app.use(express.json());
+//app.use(express.json());
+app.use(express.json({ limit: "10mb", type: "application/json" }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 let users = [];
 
-const SECRET_KEY = "linehistory_test_key"; // JWT ¼­¸í¿ë ºñ¹ĞÅ°
+const SECRET_KEY = "linehistory_test_key"; // JWT ì„œëª…ìš© ë¹„ë°€í‚¤
 
 // MariaDB connection
 const db = mysql.createConnection({
     host: "192.168.219.101",
-    user: "root", // MariaDB »ç¿ëÀÚ ÀÌ¸§
-    password: "Allusinc4u*", // MariaDB ºñ¹Ğ¹øÈ£
-    database: "linehistory", // MariaDB µ¥ÀÌÅÍº£ÀÌ½º ÀÌ¸§
+    user: "root", // MariaDB ì‚¬ìš©ì ì´ë¦„
+    password: "Allusinc4u*", // MariaDB ë¹„ë°€ë²ˆí˜¸
+    database: "linehistory", // MariaDB ë°ì´í„°ë² ì´ìŠ¤ ì´ë¦„
     port: 3307,
 });
 
@@ -68,88 +70,142 @@ app.get("/users", (req, res) => {
 
 });
 
+
+// íšŒì›ê°€ì… API
+app.post("/register", (req, res) => {
+    const { name, email, password } = req.body;
+    console.log(name, email, password);
+
+    // ì´ë©”ì¼ ì¤‘ë³µ í™•ì¸
+    const sql = "SELECT * FROM userdb WHERE email = ?";
+    db.query(sql, [email], (err, results) => {
+        if (err) {
+            console.error("db query error:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+
+        if (results.length > 0) {
+            return res.status(400).json({ error: "ì´ë¯¸ ê°€ì…ëœ ì´ë©”ì¼ì…ë‹ˆë‹¤." });
+        }
+
+        bcrypt.hash(password, 10, (err, hashedPassword) => {
+            if (err) {
+                return res.status(500).json({ error: "ë¹„ë°€ë²ˆí˜¸ ì•”í˜¸í™” ì‹¤íŒ¨" });
+            }
+
+            const usergrade = 2;
+            db.query("INSERT INTO userdb (name, passwd, email, usergrade) VALUES (?, ?, ?, ?)",
+                [name, hashedPassword, email, usergrade],
+                (err) => {
+                    if (err) {
+                        return res.status(500).json({ error: "íšŒì›ê°€ì… ì‹¤íŒ¨" });
+                    }
+                    res.json({ message: "íšŒì›ê°€ì… ì„±ê³µ" });
+                });
+        });
+
+        // ë¹„ë°€ë²ˆí˜¸ í•´ì‹±
+        /*const hashedPassword = bcrypt.hash(password, 10);
+        console.log(hashedPassword);
+        const usergrade = 2;
+        // DBì— ìƒˆ ì‚¬ìš©ì ì¶”ê°€
+        db.run("INSERT INTO userdb (name, passwd, email, usergrade) VALUES (?, ?, ?, ?)", [name, hashedPassword, email, usergrade], (err) => {
+            if (err) {
+                return res.status(500).json({ error: "íšŒì›ê°€ì… ì‹¤íŒ¨" });
+            }
+            res.json({ message: "íšŒì›ê°€ì… ì„±ê³µ" });
+        });*/
+    });
+});
+
 // Add a new user
 app.post("/users", (req, res) => {
     const { name, passwd, email } = req.body;
 
-    // À¯È¿¼º °Ë»ç
+    // ìœ íš¨ì„± ê²€ì‚¬
     if (!name || !passwd || !email) {
-        return res.status(400).json({ message: "¸ğµç ÇÊµå¸¦ ÀÔ·ÂÇÏ¼¼¿ä." });
+        return res.status(400).json({ message: "ëª¨ë“  í•„ë“œë¥¼ ì…ë ¥í•˜ì„¸ìš”." });
     }
 
-    db.query(
-        "INSERT INTO userdb (name, passwd, email) VALUES (?, ?, ?)",
-        [name, passwd, email], (err, results) => {
-            if (err) {
-                console.error("Error adding user:", err);
-                return res.status(500).json({ error: "Database error" });
-            } 
-            // »õ »ç¿ëÀÚ Ãß°¡ ÈÄ DB¿¡¼­ ´Ù½Ã Á¶È¸ÇÏ¿© users ¾÷µ¥ÀÌÆ®
-            db.query("SELECT * FROM userdb", (err, updatedResults) => {
-                if (err) {
-                    console.error("? Error fetching updated users:", err);
-                    return res.status(500).json({ error: "Database error" });
-                }
-
-                users = updatedResults;
-                console.log("? User added and users updated:", users);
-                res.json(updatedResults);
-            });
+    bcrypt.hash(passwd, saltRounds, (err, hash) => {
+        if (err) {
+            console.error("ë¹„ë°€ë²ˆí˜¸ í•´ì‹± ì˜¤ë¥˜:", err);
+            return res.status(500).json({ error: "ë¹„ë°€ë²ˆí˜¸ ì•”í˜¸í™” ì˜¤ë¥˜" });
         }
-    );
-});
+        db.query(
+            "INSERT INTO userdb (name, passwd, email) VALUES (?, ?, ?)",
+            [name, hash, email], (err, results) => {
+                if (err) {
+                    console.error("Error adding user:", err);
+                    return res.status(500).json({ error: "Database Error" });
+                }
+                res.json({ message: "íšŒì›ê°€ì… ì„±ê³µ" });
+                // ìƒˆ ì‚¬ìš©ì ì¶”ê°€ í›„ DBì—ì„œ ë‹¤ì‹œ ì¡°íšŒí•˜ì—¬ users ì—…ë°ì´íŠ¸
+                /*db.query("SELECT * FROM userdb", (err, updatedResults) => {
+                    if (err) {
+                        console.error("? Error fetching updated users:", err);
+                        return res.status(500).json({ error: "Database error" });
+                    }
 
-app.get("/check-auth", (req, res) => {
-    const token = req.cookies.authToken;
-    if (!token) return res.status(401).json({ message: "Not authenticated" });
-
-    jwt.verify(token, SECRET_KEY, (err, decoded) => {
-        if (err) return res.status(403).json({ message: "Invalid token" });
-        res.json({ id: decoded.id, email: decoded.email });
+                    users = updatedResults;
+                    console.log("? User added and users updated:", users);
+                    res.json(updatedResults);
+                });*/
+            }
+        );
     });
+
 });
 
-// ·Î±×ÀÎ (POST /login)
+
+// ë¡œê·¸ì¸ (POST /login)
 app.post("/login", (req, res) => {
     console.log("[server] /login : ", req.body);
-
+    
     const { email, passwd } = req.body;
 
     const sql = "SELECT * FROM userdb WHERE email = ?";
     db.query(sql, [email], async (err, results) => {
         if (err) {
             console.error("? Error during login:", err);
-            return res.status(500).json({ error: "Database error" });
+            res.setHeader("Content-Type", "application/json; charset=utf-8");
+            return res.status(500).json({ success: false, message: "Database ì˜¤ë¥˜" });
         }
 
         if (results.length == 0) {
             console.error("db results : 0");
-            return res.status(401).json({ message: "·Î±×ÀÎ ½ÇÆĞ: ÀÌ¸ŞÀÏÀÌ ¾ø½À´Ï´Ù." });
+            res.setHeader("Content-Type", "application/json; charset=utf-8");
+            return res.json({ success:false, message: "ë¡œê·¸ì¸ ì‹¤íŒ¨: ì´ë©”ì¼ì´ ì—†ìŠµë‹ˆë‹¤." });
         }
 
-        // ºñ¹Ğ¹øÈ£ ºñ±³
+        // ë¹„ë°€ë²ˆí˜¸ ë¹„êµ
         const user = results[0];
-        //const isMatch = await bcrypt.compare(passwd, user.passwd);
-        const isMatch = passwd == user.passwd;
-        console.log("[server] passwd", passwd, user.passwd);
-        if (!isMatch) {
-            console.error("not Matched");
-            return res.status(401).json({ message: "·Î±×ÀÎ ½ÇÆĞ: ÀÌ¸ŞÀÏ ¶Ç´Â ºñ¹Ğ¹øÈ£°¡ Æ²·È½À´Ï´Ù." });
-        }
-        // JWT ÅäÅ« »ı¼º
-        //const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, {
-        //    expiresIn: "7d" // 7ÀÏ°£ À¯È¿
-        //});
-                
-        // HttpOnly ÄíÅ° ¼³Á¤ 
-        res.cookie("user", JSON.stringify(user), {
-            httpOnly: false,  // Å¬¶óÀÌ¾ğÆ®¿¡¼­µµ Á¢±Ù °¡´É
-            secure: false, // process.env.NODE_ENV === "production", // °³¹ß È¯°æ¿¡¼­´Â false
-            sameSite: "Strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7ÀÏ À¯Áö
-        });
+        const hashedPasswd = user.passwd;
+        bcrypt.compare(passwd, hashedPasswd, (err, isMatch) => {
+            if (err) {
+                console.error("? ë¹„ë°€ë²ˆí˜¸ ê²€ì¦ ì˜¤ë¥˜:", err);
+                res.setHeader("Content-Type", "application/json; charset=utf-8");
+                return res.status(500).json({ success:false, message: "ì„œë²„ ì˜¤ë¥˜" });
+            }
+            if (!isMatch) {
+                console.error("not Matched", passwd, hashedPasswd);
+                res.setHeader("Content-Type", "application/json; charset=utf-8");
+                return res.json({ success: false, message: "ë¡œê·¸ì¸ ì‹¤íŒ¨: ë¹„ë°€ë²ˆí˜¸ê°€ í‹€ë ¸ìŠµë‹ˆë‹¤." });
+            }
+            const userData = { id: user.id, email: user.email, name: user.name };
+            //const token = jwt.sign(user, SECRET_KEY, { expiresIn: "7d" });
 
-        res.json({ id: user.id, name: user.name, email: user.email });
+            // HttpOnly ì¿ í‚¤ ì„¤ì • 
+            res.cookie("user", JSON.stringify(userData), {
+                httpOnly: false,  // í´ë¼ì´ì–¸íŠ¸ì—ì„œë„ ì ‘ê·¼ ê°€ëŠ¥
+                secure: false, // process.env.NODE_ENV === "production", // ê°œë°œ í™˜ê²½ì—ì„œëŠ” false
+                sameSite: "Strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7ì¼ ìœ ì§€
+            });
+
+            res.setHeader("Content-Type", "application/json; charset=utf-8");
+            res.json({ success:true, ...userData });
+        });
     });
 });
 
