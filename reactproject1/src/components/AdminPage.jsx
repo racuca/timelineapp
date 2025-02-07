@@ -14,7 +14,7 @@ const AdminPage = ({ serverurl }) => {
     // 중첩 라우트 설정
     const routes = useRoutes([
         { path: "/", element: <AdminDashboard serverurl={serverurl} /> },
-        { path: "users", element: <UserManagement /> },
+        { path: "users", element: <UserManagement serverurl={serverurl} /> },
         { path: "events", element: <EventManagement /> },
         { path: "settings", element: <Settings /> },
     ]);

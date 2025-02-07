@@ -281,23 +281,32 @@ app.get("/admin/stats", (req, res) => {
             }
         });
 
-        /*
-        const userResult = db.query("SELECT COUNT(*) AS totalUsers FROM userdb");
-        const eventResult = db.query("SELECT COUNT(*) AS totalEvents FROM historyinfo");
-        const latestEvents = db.query("SELECT id, createdt, title, description FROM historyinfo ORDER BY id DESC LIMIT 5");
-        console.log(latestEvents);
-        res.json({
-            totalUsers: userResult.totalUsers,
-            totalEvents: eventResult.totalEvents,
-            latestEvents, // 배열이므로 그대로 반환
-        });*/
-
     } catch (error) {
         console.error("Error fetching admin stats:", error);
         res.status(500).json({ error: "Database query failed" });
     }
 });
 
+
+// Get all events
+app.get("/admin/users", (req, res) => {
+    try {
+        const search = req.query.search ? `%${req.query.search}%` : "%";        
+        db.query("SELECT * FROM userdb where name LIKE ? or email LIKE ?", [search, search],
+        (err, results) => {
+            if (err) {
+                console.error("Error fetching users:", err);
+                res.status(500).json({ error: err.message });
+            } else {
+                console.log("admin user query", results);
+                res.json(results);
+            }
+        });
+    } catch (error) {
+        console.error("Error fetching admin stats:", error);
+        res.status(500).json({ error: "Database query failed" });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
