@@ -192,7 +192,7 @@ app.post("/login", (req, res) => {
                 res.setHeader("Content-Type", "application/json; charset=utf-8");
                 return res.json({ success: false, message: "로그인 실패: 비밀번호가 틀렸습니다." });
             }
-            const userData = { id: user.id, email: user.email, name: user.name };
+            const userData = { id: user.id, email: user.email, name: user.name, usergrade: user.usergrade };
             //const token = jwt.sign(user, SECRET_KEY, { expiresIn: "7d" });
 
             // HttpOnly 쿠키 설정 

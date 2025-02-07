@@ -1,6 +1,7 @@
 ﻿import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const SignUpPage = ({ serverurl }) => {
     const [name, setName] = useState("");
@@ -11,7 +12,17 @@ const SignUpPage = ({ serverurl }) => {
     const [agreeMarketing, setAgreeMarketing] = useState(false);
     const [showTerms, setShowTerms] = useState(false);
     const [error, setError] = useState(null);
+    const [policy, setPolicy] = useState("");
+    const [collector, setCollector] = useState("");
+    const [marketing, setMarketing] = useState("");
     const navigate = useNavigate();
+
+
+    useEffect(() => {
+        
+
+    }, []);
+
 
     const handleSignUp = async (e) => {
         e.preventDefault();
@@ -20,7 +31,7 @@ const SignUpPage = ({ serverurl }) => {
             return;
         }
         try {
-            const response = await axios.post(`${serverurl}/register`, { name, email, password });
+            const response = await axios.post(`${serverurl}/register`, { name, email, password, agreeMarketing });
 
             alert("회원가입 성공! 로그인 해주세요.");
             navigate("/login"); // 로그인 페이지로 이동

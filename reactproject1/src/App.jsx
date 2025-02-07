@@ -8,6 +8,7 @@ import Timeline from "./components/Timeline";
 import EventModal from "./components/EventModal";
 import LoginPage from "./LoginPage";
 import SignUpPage from "./SignUpPage";
+import AdminPage from "./components/AdminPage"
 import "./App.css";
 
 // npm install 
@@ -81,18 +82,23 @@ const App = () => {
                                 {loggedInUser ? (
                                     <div>
                                         <span>Welcome, {loggedInUser.name}</span>
+                                        {loggedInUser.usergrade === 1004 && (
+                                            <Link to="/admin">
+                                                <button>Admin Page</button>
+                                            </Link>
+                                        )}
                                         <button onClick={handleLogout} style={{ marginLeft: "10px" }}>
                                             Logout
                                         </button>
                                     </div>
                                 ) : (
                                     <div style={{ display: "flex", gap: "10px" }}>
-                                    <Link to="/login">
-                                        <button>Login</button>
-                                    </Link>
-                                    <Link to="/signup">
-                                        <button style={{ marginLeft: "10px" }}>Sign Up</button>
-                                    </Link>
+                                        <Link to="/login">
+                                            <button>Login</button>
+                                        </Link>
+                                        <Link to="/signup">
+                                            <button style={{ marginLeft: "10px" }}>Sign Up</button>
+                                        </Link>
                                     </div>
                                 )}
                             </div>
@@ -115,6 +121,7 @@ const App = () => {
             <Route path="/login" element={<LoginPage serverurl={serverurl} setLoggedInUser={setLoggedInUser} />} />
             {/* Signup Page */}
             <Route path="/signup" element={<SignUpPage serverurl={serverurl} />} />
+            <Route path="/admin" element={<AdminPage />} />
         </Routes>
     );
 };
