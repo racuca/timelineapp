@@ -121,7 +121,9 @@ const App = () => {
             <Route path="/login" element={<LoginPage serverurl={serverurl} setLoggedInUser={setLoggedInUser} />} />
             {/* Signup Page */}
             <Route path="/signup" element={<SignUpPage serverurl={serverurl} />} />
-            <Route path="/admin" element={<AdminPage />} />
+            {/* Admin Panel Route */}
+            <Route path="/admin/*" element={<AdminPage />} />
+
         </Routes>
     );
 };
