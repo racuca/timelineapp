@@ -3,17 +3,17 @@
     height: 100vh;
 }
 
-/* ¿ŞÂÊ ¸Ş´º¹Ù¸¦ È­¸é ¿ŞÂÊ¿¡ °íÁ¤ */
+/* ì™¼ìª½ ë©”ë‰´ë°”ë¥¼ í™”ë©´ ì™¼ìª½ì— ê³ ì • */
 .admin-sidebar {
     width: 250px;
     background-color: #333;
     color: white;
     padding: 20px;
-    position: fixed; /* È­¸é ¿ŞÂÊ¿¡ °íÁ¤ */
+    position: fixed; /* í™”ë©´ ì™¼ìª½ì— ê³ ì • */
     left: 0;
     top: 0;
     height: 100%;
-    overflow-y: auto; /* ¸Ş´º°¡ ¸¹¾ÆÁú °æ¿ì ½ºÅ©·Ñ °¡´É */
+    overflow-y: auto; /* ë©”ë‰´ê°€ ë§ì•„ì§ˆ ê²½ìš° ìŠ¤í¬ë¡¤ ê°€ëŠ¥ */
 }
 
 .admin-sidebar h2 {
@@ -43,11 +43,11 @@
     background-color: #555;
 }
 
-/* ¿À¸¥ÂÊ ÄÁÅÙÃ÷ ¿µ¿ª - »çÀÌµå¹Ù¿Í °ãÄ¡Áö ¾Êµµ·Ï ¿©¹é Ãß°¡ */
+/* ì˜¤ë¥¸ìª½ ì»¨í…ì¸  ì˜ì—­ - ì‚¬ì´ë“œë°”ì™€ ê²¹ì¹˜ì§€ ì•Šë„ë¡ ì—¬ë°± ì¶”ê°€ */
 .admin-content {
     flex-grow: 1;
     padding: 20px;
     background-color: #f4f4f4;
-    margin-left: 250px; /* ¿ŞÂÊ ¸Ş´º ³Êºñ¸¸Å­ ÄÁÅÙÃ÷ ¹Ğ¾îÁÖ±â */
-    overflow: auto; /* ½ºÅ©·Ñ °¡´ÉÇÏµµ·Ï ¼³Á¤ */
+    margin-left: 250px; /* ì™¼ìª½ ë©”ë‰´ ë„ˆë¹„ë§Œí¼ ì»¨í…ì¸  ë°€ì–´ì£¼ê¸° */
+    overflow: auto; /* ìŠ¤í¬ë¡¤ ê°€ëŠ¥í•˜ë„ë¡ ì„¤ì • */
 }

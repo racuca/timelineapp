@@ -122,7 +122,7 @@ const App = () => {
             {/* Signup Page */}
             <Route path="/signup" element={<SignUpPage serverurl={serverurl} />} />
             {/* Admin Panel Route */}
-            <Route path="/admin/*" element={<AdminPage />} />
+            <Route path="/admin/*" element={<AdminPage serverurl={serverurl} />} />
 
         </Routes>
     );

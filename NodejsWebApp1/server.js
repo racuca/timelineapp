@@ -244,6 +244,61 @@ app.post("/events", (req, res) => {
     );
 });
 
+
+// Admin Page
+
+// Get all events
+app.get("/admin/stats", (req, res) => {
+    try {
+        console.log("1");
+        const resulttotal = []
+        db.query("SELECT COUNT(*) AS totalUsers FROM userdb", (err, results) => {
+            if (err) {
+                console.error("Error fetching events:", err);
+                res.status(500).json({ error: "Database error" });
+            } else {
+                console.log("event query", results);
+                resulttotal.push({ totalUsers: results[0].totalUsers })
+                db.query("SELECT COUNT(*) AS totalEvents FROM historyinfo", (err, results) => {
+                    if (err) {
+                        console.error("Error fetching events:", err);
+                        res.status(500).json({ error: "Database error" });
+                    } else {
+                        console.log("event query", results);
+                        resulttotal.push({ totalEvents: results[0].totalEvents })
+                        db.query("SELECT id, createdt, title, description FROM historyinfo ORDER BY id DESC LIMIT 5", (err, results) => {
+                            if (err) {
+                                console.error("Error fetching events:", err);
+                                res.status(500).json({ error: "Database error" });
+                            } else {
+                                console.log("event query", results);
+                                resulttotal.push({ latestEvents: results })
+                                res.json(resulttotal);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        /*
+        const userResult = db.query("SELECT COUNT(*) AS totalUsers FROM userdb");
+        const eventResult = db.query("SELECT COUNT(*) AS totalEvents FROM historyinfo");
+        const latestEvents = db.query("SELECT id, createdt, title, description FROM historyinfo ORDER BY id DESC LIMIT 5");
+        console.log(latestEvents);
+        res.json({
+            totalUsers: userResult.totalUsers,
+            totalEvents: eventResult.totalEvents,
+            latestEvents, // 배열이므로 그대로 반환
+        });*/
+
+    } catch (error) {
+        console.error("Error fetching admin stats:", error);
+        res.status(500).json({ error: "Database query failed" });
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });

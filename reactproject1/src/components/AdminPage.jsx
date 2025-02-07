@@ -7,13 +7,13 @@ import AdminDashboard from "./AdminDashboard";
 import UserManagement from "./AdminUserManager";
 import EventManagement from "./AdminEventManager";
 import Settings from "./AdminSettings";
-import "./AdminPage.css"; // ½ºÅ¸ÀÏ ÆÄÀÏ
+import "./AdminPage.css";
 
 
-const AdminPage = () => {
-    // ÁßÃ¸ ¶ó¿ìÆ® ¼³Á¤
+const AdminPage = ({ serverurl }) => {
+    // ì¤‘ì²© ë¼ìš°íŠ¸ ì„¤ì •
     const routes = useRoutes([
-        { path: "/", element: <AdminDashboard /> },
+        { path: "/", element: <AdminDashboard serverurl={serverurl} /> },
         { path: "users", element: <UserManagement /> },
         { path: "events", element: <EventManagement /> },
         { path: "settings", element: <Settings /> },
@@ -21,7 +21,7 @@ const AdminPage = () => {
 
     return (
         <div className="admin-container">
-            {/* ¿ŞÂÊ ¸Ş´º */}
+            {/* ì™¼ìª½ ë©”ë‰´ */}
             <nav className="admin-sidebar">
                 <h2>Admin Panel</h2>
                 <ul>
@@ -32,7 +32,7 @@ const AdminPage = () => {
                 </ul>
             </nav>
 
-            {/* ¿À¸¥ÂÊ ÄÜÅÙÃ÷ */}
+            {/* ì˜¤ë¥¸ìª½ ì½˜í…ì¸  */}
             <div className="admin-content">
                 {routes}
             </div>
