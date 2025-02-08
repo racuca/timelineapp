@@ -287,7 +287,6 @@ app.get("/admin/stats", (req, res) => {
     }
 });
 
-
 // Get all events
 app.get("/admin/users", (req, res) => {
     try {
@@ -307,6 +306,27 @@ app.get("/admin/users", (req, res) => {
         res.status(500).json({ error: "Database query failed" });
     }
 });
+
+// Save user edit
+app.post("/admin/users/edit/:id", (req, res) => {
+    const { id } = req.params;
+    const { name, email, usergrade, agreemarketing } = req.body;
+
+    db.query(
+        "UPDATE userdb SET name = ?, email = ?, usergrade=?, agreemarketing=? WHERE id = ?",
+        [name, email, usergrade, agreemarketing, id],
+        (err, results) => {
+            if (err) {
+                console.error("Error adding event:", err);
+                res.status(500).json({ error: "Database error" });
+            } else {
+                res.json({ success: true, updatedRows: this.changes });
+            }
+        }
+    );
+});
+
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

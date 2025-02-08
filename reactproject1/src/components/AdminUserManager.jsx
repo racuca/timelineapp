@@ -6,6 +6,11 @@ import axios from "axios";
 const UserManagement = ({ serverurl }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredUsers, setFilteredUsers] = useState([]);
+    const [editingUser, setEditingUser] = useState(null);
+    const [editName, setEditName] = useState("");
+    const [editEmail, setEditEmail] = useState("");
+    const [editUserGrade, setEditUserGrade] = useState(0); 
+    const [editAgreeMarketing, setEditAgreeMarketing] = useState(0);
 
 
     const handleSearch = () => {
@@ -18,6 +23,25 @@ const UserManagement = ({ serverurl }) => {
                 console.error("Error fetching dashboard stats:", error);
             });
     };
+
+    const handleEdit = (user) => {
+        setEditingUser(user.id);
+        setEditName(user.name);
+        setEditEmail(user.email);
+        setEditUserGrade(user.usergrade);
+        setEditAgreeMarketing(user.agreemarketing);
+    };
+
+    const handleSave = (id) => {
+        const edituser = { name: editName, email: editEmail, usergrade: editUserGrade, agreemarketing: editAgreeMarketing }
+        axios.post(serverurl + "/admin/users/edit/" + id, edituser)
+        .then((response) => {
+            setEditingUser(null);       
+        }).catch((error) => {
+            console.error("Error updating user:", error);
+        });;
+    };
+
 
     return (
         <div className="p-4 max-w-2xl mx-auto">
@@ -43,17 +67,31 @@ const UserManagement = ({ serverurl }) => {
                             <th>등급</th>
                             <th>가입날짜</th>
                             <th>마케팅동의여부</th>
+                            <th>수정</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredUsers.map(event => (
                             <tr key={event.id}>
                                 <td>{event.id}</td>
-                                <td>{event.name}</td>
-                                <td>{event.email}</td>
-                                <td>{event.usergrade}</td>
+                                <td>{editingUser == event.id ? (
+                                    <input value={editName} onChange={(e) => setEditName(e.target.value)} className="border p-1 w-auto min-w-[100px]" />
+                                ): (event.name) }</td>
+                                <td>{editingUser == event.id ? (
+                                    <input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} className="border p-1 w-auto min-w-[100px]" />
+                                ): (event.email) }</td>
+                                <td>{editingUser == event.id ? (
+                                    <input value={editUserGrade} onChange={(e) => setEditUserGrade(e.target.value)} className="border p-1 w-auto min-w-[100px]" />
+                                ): (event.usergrade)}</td>
                                 <td>{event.signupdt}</td>
-                                <td>{event.agreemarketing}</td>
+                                <td>{editingUser == event.id ? (
+                                    <input value={editAgreeMarketing} onChange={(e) => setEditAgreeMarketing(e.target.value)} className="border p-1 w-auto min-w-[100px]" />
+                                ): (event.agreemarketing) }</td>
+                                <td>{editingUser == event.id ? (
+                                    <button onClick={() => handleSave(event.id)}>Save</button>
+                                ) : (
+                                    <button onClick={() => handleEdit(event)}>Edit</button>
+                                )} </td>
                             </tr>
                         ))}
                     </tbody>
