@@ -2,30 +2,28 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { formatKoreanDateTime } from "./parseUtils";
 
 const UserInfoPage = () => {
     const location = useLocation();
     const user = location.state?.user || {};
     const [tokenCount, setTokenCount] = useState(0);
-    const [recentEvents, setRecentEvents] = useState([]);
+    const [recentEvents, setRecentEvents] = useState({});
     const serverurl = "http://localhost:5001"; // 서버 주소
 
     useEffect(() => {
-        if (user.id) {
-            // 1. Token 데이터 가져오기
-            axios.get(`${serverurl}/user/${user.id}/tokens`)
-                .then(response => setTokenCount(response.data.tokens))
-                .catch(error => console.error("Error fetching tokens:", error));
-
+        if (user.id != undefined) {
             // 2. 최근 이벤트 가져오기
-            axios.get(`${serverurl}/user/${user.id}/events`)
-                .then(response => setRecentEvents(response.data))
+            axios.get(`${serverurl}/user/events/${user.id}`)
+                .then(response => {
+                    setRecentEvents(response.data)
+                })
                 .catch(error => console.error("Error fetching events:", error));
         }
     }, [user.id]);
 
     const handleReceiveToken = () => {
-        axios.post(`${serverurl}/user/${user.id}/receive-token`)
+        axios.post(`${serverurl}/user/gettoken/${user.id}`)
             .then(response => {
                 setTokenCount(response.data.newTokenCount);
                 alert("토큰을 받았습니다!");
@@ -38,12 +36,27 @@ const UserInfoPage = () => {
             {/* 프로필 정보 */}
             <div style={styles.card}>
                 <h2>👤 User Profile</h2>
-                <p><strong>id:</strong> {user.id}</p>
                 <p><strong>Name:</strong> {user.name}</p>
                 <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Grade:</strong> {user.usergrade}</p>
-                <p><strong>signupdt:</strong> {user.signupdt}</p>
-                <p><strong>agreemarketing:</strong> {user.agreemarketing}</p>
+                <p><strong>등급:</strong> {user.usergrade}</p>
+                <p><strong>가입일자:</strong> {formatKoreanDateTime(user.signupdt)}</p>
+                <p><strong>마케팅정보동의:</strong> {user.agreemarketing ? "여" : "부"}</p>
+            </div>
+
+            {/* 최근 이벤트 */}
+            <div style={styles.card}>
+                <h2>📝 My Events</h2>
+                <div style={styles.eventList}>
+                    {recentEvents ? (
+                        <div key={recentEvents.id} style={styles.eventItem}>
+                            <p><strong>{recentEvents.createdt}</strong></p>
+                            <p><strong>{recentEvents.title}</strong></p>
+                            <p>{recentEvents.description}</p>
+                        </div>
+                    ) : (
+                        <p>최근 올린 이벤트가 없습니다.</p>
+                    )}
+                </div>
             </div>
 
             {/* Token 정보 */}
@@ -53,23 +66,6 @@ const UserInfoPage = () => {
                 <button style={styles.button} onClick={handleReceiveToken}>토큰 받기</button>
             </div>
 
-            {/* 최근 이벤트 */}
-            <div style={styles.card}>
-                <h2>📝 Recent Events</h2>
-                <div style={styles.eventList}>
-                    {recentEvents.length > 0 ? (
-                        recentEvents.map((event) => (
-                            <div key={event.id} style={styles.eventItem}>
-                                <p><strong>{event.title}</strong></p>
-                                <p>{event.description}</p>
-                                <p><small>{event.date}</small></p>
-                            </div>
-                        ))
-                    ) : (
-                        <p>최근 올린 이벤트가 없습니다.</p>
-                    )}
-                </div>
-            </div>
         </div>
     );
 };

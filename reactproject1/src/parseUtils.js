@@ -59,3 +59,16 @@ export const truncateText = (text, maxLength) => {
     }
     return text;
 };
+
+export const formatKoreanDateTime = (isoString) => {
+    return new Intl.DateTimeFormat("ko-KR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: true,
+        timeZone: "Asia/Seoul",
+    }).format(new Date(isoString));
+};

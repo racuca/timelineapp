@@ -11,7 +11,7 @@ const UserManagement = ({ serverurl }) => {
     const [editEmail, setEditEmail] = useState("");
     const [editUserGrade, setEditUserGrade] = useState(0); 
     const [editAgreeMarketing, setEditAgreeMarketing] = useState(0);
-
+    const [editTokens, setEditTokens] = useState(0);
 
     const handleSearch = () => {
         const query = serverurl + "/admin/users?search=" + `${searchTerm}`;
@@ -30,10 +30,11 @@ const UserManagement = ({ serverurl }) => {
         setEditEmail(user.email);
         setEditUserGrade(user.usergrade);
         setEditAgreeMarketing(user.agreemarketing);
+        setEditTokens(user.tokens);
     };
 
     const handleSave = (id) => {
-        const edituser = { name: editName, email: editEmail, usergrade: editUserGrade, agreemarketing: editAgreeMarketing }
+        const edituser = { name: editName, email: editEmail, usergrade: editUserGrade, agreemarketing: editAgreeMarketing, tokens: editTokens }
         axios.post(serverurl + "/admin/users/edit/" + id, edituser)
         .then((response) => {
             setEditingUser(null);       
@@ -66,7 +67,8 @@ const UserManagement = ({ serverurl }) => {
                             <th>email</th>
                             <th>등급</th>
                             <th>가입날짜</th>
-                            <th>마케팅동의여부</th>
+                            <th>마케팅동의</th>
+                            <th>토큰</th>
                             <th>수정</th>
                         </tr>
                     </thead>
@@ -86,7 +88,10 @@ const UserManagement = ({ serverurl }) => {
                                 <td>{event.signupdt}</td>
                                 <td>{editingUser == event.id ? (
                                     <input value={editAgreeMarketing} onChange={(e) => setEditAgreeMarketing(e.target.value)} className="border p-1 w-auto min-w-[100px]" />
-                                ): (event.agreemarketing) }</td>
+                                ) : (event.agreemarketing)}</td>
+                                <td>{editingUser == event.id ? (
+                                    <input value={editTokens} onChange={(e) => setEditTokens(e.target.value)} className="border p-1 w-auto min-w-[100px]" />
+                                ) : (event.tokens)}</td>
                                 <td>{editingUser == event.id ? (
                                     <button onClick={() => handleSave(event.id)}>Save</button>
                                 ) : (

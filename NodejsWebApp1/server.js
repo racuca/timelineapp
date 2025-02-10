@@ -309,11 +309,11 @@ app.get("/admin/users", (req, res) => {
 // Edit user
 app.post("/admin/users/edit/:id", (req, res) => {
     const { id } = req.params;
-    const { name, email, usergrade, agreemarketing } = req.body;
+    const { name, email, usergrade, agreemarketing, tokens } = req.body;
 
     db.query(
-        "UPDATE userdb SET name = ?, email = ?, usergrade=?, agreemarketing=? WHERE id = ?",
-        [name, email, usergrade, agreemarketing, id],
+        "UPDATE userdb SET name = ?, email = ?, usergrade=?, agreemarketing=?, tokens=? WHERE id = ?",
+        [name, email, usergrade, agreemarketing, tokens, id],
         (err, results) => {
             if (err) {
                 console.error("Error editing user:", err);
@@ -361,6 +361,47 @@ app.post("/admin/events/edit/:id", (req, res) => {
                 res.status(500).json({ error: "Database error" });
             } else {
                 res.json({ success: true, updatedRows: this.changes });
+            }
+        }
+    );
+});
+
+
+// UserInfoPage Data
+app.get("/user/events/:id", (req, res) => {
+    const { id } = req.params;
+
+    db.query(
+        "SELECT * FROM historyinfo where userid = ? order by id DESC LIMIT 1",
+        [id],
+        (err, results) => {
+            if (err) {
+                console.error("Error query user:", err);
+                res.status(500).json({ error: "Database error" });
+            } else {
+                res.json( results[0] );
+            }
+        }
+    );
+});
+app.post("/user/gettoken/:id", (req, res) => {
+    const { id } = req.params;
+
+    db.query(
+        "UPDATE userdb SET tokens = tokens + 1 WHERE id = ?",
+        [id],
+        (err, results) => {
+            if (err) {
+                console.error("Error editing user:", err);
+                res.status(500).json({ error: "Database error" });
+            } else {
+                db.query(
+                    "SELECT tokens FROM userdb WHERE id = ?",
+                    [id],
+                    (err, results) => {
+                        res.json({ success: true, newTokenCount: results[0].tokens });
+                    }
+                );
             }
         }
     );
