@@ -1,6 +1,6 @@
 import React from "react";
 
-const Settings = () => {
+const Settings = ({ serverurl }) => {
     return (
         <div>
             <h2>Settings</h2>

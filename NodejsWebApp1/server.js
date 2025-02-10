@@ -287,7 +287,7 @@ app.get("/admin/stats", (req, res) => {
     }
 });
 
-// Get all events
+// Search users
 app.get("/admin/users", (req, res) => {
     try {
         const search = req.query.search ? `%${req.query.search}%` : "%";        
@@ -307,7 +307,7 @@ app.get("/admin/users", (req, res) => {
     }
 });
 
-// Save user edit
+// Edit user
 app.post("/admin/users/edit/:id", (req, res) => {
     const { id } = req.params;
     const { name, email, usergrade, agreemarketing } = req.body;
@@ -317,7 +317,7 @@ app.post("/admin/users/edit/:id", (req, res) => {
         [name, email, usergrade, agreemarketing, id],
         (err, results) => {
             if (err) {
-                console.error("Error adding event:", err);
+                console.error("Error editing user:", err);
                 res.status(500).json({ error: "Database error" });
             } else {
                 res.json({ success: true, updatedRows: this.changes });
@@ -326,6 +326,46 @@ app.post("/admin/users/edit/:id", (req, res) => {
     );
 });
 
+// Search events
+app.get("/admin/events", (req, res) => {
+    try {
+        const search = req.query.search ? `%${req.query.search}%` : "%";
+        const sql = "SELECT h.*, u.name FROM historyinfo h JOIN userdb u ON h.userid = u.id WHERE h.title LIKE ? OR h.description LIKE ? GROUP BY h.id, u.name"
+        db.query(sql, [search, search],
+            (err, results) => {
+                if (err) {
+                    console.error("Error fetching event:", err);
+                    res.status(500).json({ error: err.message });
+                } else {
+                    console.log("admin event query", results);
+                    res.json(results);
+                }
+            });
+    } catch (error) {
+        console.error("Error fetching admin stats:", error);
+        res.status(500).json({ error: "Database query failed" });
+    }
+});
+
+
+// Edit event 
+app.post("/admin/events/edit/:id", (req, res) => {
+    const { id } = req.params;
+    const { createdt, title, description, level, userid } = req.body;
+
+    db.query(
+        "UPDATE historyinfo SET createdt = ?, title = ?, description=?, level=?, userid=? WHERE id = ?",
+        [createdt, title, description, level, userid, id],
+        (err, results) => {
+            if (err) {
+                console.error("Error editing event:", err);
+                res.status(500).json({ error: "Database error" });
+            } else {
+                res.json({ success: true, updatedRows: this.changes });
+            }
+        }
+    );
+});
 
 
 app.listen(port, () => {

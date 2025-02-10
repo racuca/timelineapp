@@ -57,7 +57,7 @@ const UserManagement = ({ serverurl }) => {
             </div>
             {/* 최근 추가된 이벤트 목록 */}
             <div className="recent-events">
-                <h2>최근 추가된 이벤트</h2>
+                <h2>최근 추가된 회원</h2>
                 <table>
                     <thead>
                         <tr>

@@ -15,8 +15,8 @@ const AdminPage = ({ serverurl }) => {
     const routes = useRoutes([
         { path: "/", element: <AdminDashboard serverurl={serverurl} /> },
         { path: "users", element: <UserManagement serverurl={serverurl} /> },
-        { path: "events", element: <EventManagement /> },
-        { path: "settings", element: <Settings /> },
+        { path: "events", element: <EventManagement serverurl={serverurl} /> },
+        { path: "settings", element: <Settings serverurl={serverurl} /> },
     ]);
 
     return (

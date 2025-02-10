@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
-import { convertDateToStr }  from "../parseUtils";
+import { convertDateToStr, truncateText }  from "../parseUtils";
+
 
 const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical }) => {
     const handleZoomIn = () => {
@@ -115,7 +116,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 .style("font-weight", "bold");
 
             text.append("tspan")
-                .text(d.description) // 세 번째 줄 (설명)
+                .text(truncateText(d.description, 15)) // 세 번째 줄 (설명)
                 .attr("x", isVertical ? (i % 2 === 0 ? -200 : 50) : 0)
                 .attr("dy", "2em");
         });
