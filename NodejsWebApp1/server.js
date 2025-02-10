@@ -192,12 +192,11 @@ app.post("/login", (req, res) => {
                 res.setHeader("Content-Type", "application/json; charset=utf-8");
                 return res.json({ success: false, message: "로그인 실패: 비밀번호가 틀렸습니다." });
             }
-            const userData = { id: user.id, email: user.email, name: user.name, usergrade: user.usergrade };
-            //const token = jwt.sign(user, SECRET_KEY, { expiresIn: "7d" });
+            const userData = { id: user.id, email: user.email, name: user.name, usergrade: user.usergrade, signupdt: user.signupdt, agreemarketing: user.agreemarketing };
 
             // HttpOnly 쿠키 설정 
             res.cookie("user", JSON.stringify(userData), {
-                httpOnly: false,  // 클라이언트에서도 접근 가능
+                httpOnly: false, // 클라이언트에서도 접근 가능
                 secure: false, // process.env.NODE_ENV === "production", // 개발 환경에서는 false
                 sameSite: "Strict",
                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7일 유지

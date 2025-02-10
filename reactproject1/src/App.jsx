@@ -8,7 +8,8 @@ import Timeline from "./components/Timeline";
 import EventModal from "./components/EventModal";
 import LoginPage from "./LoginPage";
 import SignUpPage from "./SignUpPage";
-import AdminPage from "./components/AdminPage"
+import AdminPage from "./admin/AdminPage"
+import UserInfoPage from "./UserInfoPage";
 import "./App.css";
 
 // npm install 
@@ -81,7 +82,14 @@ const App = () => {
                             <div style={{ alignSelf: "center" }}>
                                 {loggedInUser ? (
                                     <div>
-                                        <span>Welcome, {loggedInUser.name}</span>
+                                        {/* 사용자 이름을 클릭하면 userinfo 페이지로 이동 */}
+                                        <Link
+                                            to="/userinfo"
+                                            state={{ user: loggedInUser }}
+                                            style={{ cursor: "pointer", textDecoration: "underline", color: "blue", marginRight: "10px" }}
+                                        >
+                                            <span>Welcome, {loggedInUser.name}</span>
+                                        </Link>                                        
                                         {loggedInUser.usergrade === 1004 && (
                                             <Link to="/admin">
                                                 <button>Admin Page</button>
@@ -123,7 +131,8 @@ const App = () => {
             <Route path="/signup" element={<SignUpPage serverurl={serverurl} />} />
             {/* Admin Panel Route */}
             <Route path="/admin/*" element={<AdminPage serverurl={serverurl} />} />
-
+            {/* User Info Page 추가 */}
+            <Route path="/userinfo" element={<UserInfoPage />} />
         </Routes>
     );
 };
