@@ -350,11 +350,11 @@ app.get("/admin/events", (req, res) => {
 // Edit event 
 app.post("/admin/events/edit/:id", (req, res) => {
     const { id } = req.params;
-    const { createdt, title, description, level, userid } = req.body;
+    const { createdt, title, description, level, userid, category } = req.body;
 
     db.query(
-        "UPDATE historyinfo SET createdt = ?, title = ?, description=?, level=?, userid=? WHERE id = ?",
-        [createdt, title, description, level, userid, id],
+        "UPDATE historyinfo SET createdt = ?, title = ?, description=?, level=?, userid=?, category=? WHERE id = ?",
+        [createdt, title, description, level, userid, category, id],
         (err, results) => {
             if (err) {
                 console.error("Error editing event:", err);
@@ -366,6 +366,29 @@ app.post("/admin/events/edit/:id", (req, res) => {
     );
 });
 
+// Add common event 
+app.post("/admin/events/add", (req, res) => {
+    try {
+        const historyData = req.body;
+        const query =
+            "INSERT INTO commonhistory (createdt, title, description, level, userid) VALUES (?, ?, ?, ?, ?)";
+
+        for (const entry of historyData) {
+            db.execute(query, [
+                entry.createdt,
+                entry.title,
+                entry.description,
+                entry.level,
+                entry.userid,
+            ]);
+        }
+
+        res.status(200).json({ success: true, message: "데이터 저장 완료" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json("오류 발생");
+    }
+});
 
 // UserInfoPage Data
 app.get("/user/events/:id", (req, res) => {

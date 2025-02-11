@@ -88,7 +88,7 @@ const App = () => {
                                             state={{ user: loggedInUser }}
                                             style={{ cursor: "pointer", textDecoration: "underline", color: "blue", marginRight: "10px" }}
                                         >
-                                            <span>Welcome, {loggedInUser.name}</span>
+                                            <span>{loggedInUser.name}</span>
                                         </Link>                                        
                                         {loggedInUser.usergrade === 1004 && (
                                             <Link to="/admin">
