@@ -29,6 +29,14 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     const innerWidth = Math.max(baseWidth, eventCount * baseEventSpacing + 100);
     const innerHeight = isVertical ? innerWidth : 540; 
 
+    const [selectedCategory, setSelectedCategory] = useState([]);
+    const categories = ["개인사", "정치사회", "경제", "예술", "인물", "교육"];
+    const toggleSelection = (index) => {
+        setSelectedCategory((prev) =>
+            prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+        );
+    };
+
     useEffect(() => {
         const handleResize = () => {
             console.log("window width change", window.innerWidth);
@@ -157,9 +165,29 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
 
     }, [events, isVertical, dynamicWidth]);
 
+    const selectCategory = () => {
+        console.log("Selected categories (indexes):", selectedCategory);
+    };
+
     return (
         <div>
-            <div className="button-container">
+            <div className="flex flex-col items-center space-y-4">
+                <div className="border p-2 w-56 bg-white shadow-md">
+                    {categories.map((category, index) => (
+                        <label key={index} className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                checked={selectedCategory.includes(index)}
+                                onChange={() => toggleSelection(index)}
+                            />
+                            <span>{category}</span>
+                        </label>
+                    ))}
+                </div>
+                <button onClick={selectCategory}>Select Category</button>
+            </div>
+            <div className="button-right-container">
+                
                 <button onClick={handleZoomIn}>Zoom In</button>
                 <button onClick={handleZoomOut}>Zoom Out</button>
                 <button onClick={handleZoomReset}>Reset Zoom</button>
