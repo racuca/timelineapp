@@ -46,17 +46,25 @@ const App = () => {
     }, []); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
     
     useEffect(() => {
+        const storedUser = Cookies.get("user");
+        let userobj = undefined;
+        if (storedUser) {
+            userobj = JSON.parse(storedUser);
+        }
+
         axios
-        .get(serverurl + "/events")
-        .then((response) => {
-            const sortedEvents = [...response.data].sort((a, b) => parseDate(a.createdt) - parseDate(b.createdt));
-            if (JSON.stringify(events) !== JSON.stringify(sortedEvents)) {
-                setEvents(sortedEvents); // 정렬된 데이터 저장
-            }
-        })
-        .catch((error) => {
-            console.error("Error fetching events:", error);
-        });
+            .get(serverurl + "/events", {
+                params: { userid: userobj ? userobj["id"] : "null" }
+            })
+            .then((response) => {
+                const sortedEvents = [...response.data].sort((a, b) => parseDate(a.createdt) - parseDate(b.createdt));
+                if (JSON.stringify(events) !== JSON.stringify(sortedEvents)) {
+                    setEvents(sortedEvents); // 정렬된 데이터 저장
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching events:", error);
+            });
     }, [events]); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
     
 

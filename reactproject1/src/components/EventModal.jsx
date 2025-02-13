@@ -1,20 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import { parseDate } from "../parseUtils";
+import Cookies from "js-cookie";
 
-
-const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, containerRef, svgRef }) => {
+const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, containerRef, svgRef}) => {
+    
     const [newEventTitle, setNewEventTitle] = useState(""); 
     const [newEventDescription, setNewEventDescription] = useState("");
     const [newEventLevel, setNewEventLevel] = useState(0); // Default level: 0
-    const [year, setYear] = useState(2025);
-    const [month, setMonth] = useState(1);
-    const [day, setDay] = useState(1);
+    const [newEventCategory, setNewEventCategory] = useState(0); // Default category: 0
+    const [year, setYear] = useState(0);
+    const [month, setMonth] = useState(0);
+    const [day, setDay] = useState(0);
     const [hour, setHour] = useState(0);
     const [minute, setMinute] = useState(0);
     const [second, setSecond] = useState(0);
     const [isBC, setIsBC] = useState(false);
+    const [loggedInUser, setLoggedInUser] = useState(null); // To track logged-in user
+
+    useEffect(() => {
+        const storedUser = Cookies.get("user");
+        console.log(storedUser);
+        if (storedUser) {
+            setLoggedInUser(JSON.parse(storedUser));
+        }
+        const now = new Date();
+        setYear(now.getFullYear());
+        setMonth(now.getMonth() + 1);
+        setDay(now.getDate());
+        setHour(now.getHours());
+        setMinute(now.getMinutes());
+        setSecond(now.getSeconds());
+    }, [isModalOpen]); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
+
 
     const handleAddEvent = () => {
         if (!newEventDescription.trim()) {
@@ -28,12 +47,13 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
             .toString().padStart(2, "0")}:${second
             .toString().padStart(2, "0")}`;
         const newEvent = {
-            id: events.length + 1,
+            //id: events.length + 1,
             createdt: formattedDate,
             title: newEventTitle,
             description: newEventDescription,
             level: newEventLevel || 0,
-            userid: 1
+            category: newEventCategory, 
+            userid: loggedInUser.id
         };
 
         setEvents((prevEvents) => {
@@ -67,7 +87,10 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
     };
 
     const handleToggleBC = () => setIsBC((prev) => !prev);
-
+    const categoryData = {
+        0: "개인사", 1: "정치사회", 2: "경제", 3: "예술",
+        4: "인물", 5: "과학기술", 6: "전쟁", 7: "스포츠"
+    };
     return (
         <div>
             <Modal
@@ -186,6 +209,27 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                         {[...Array(11).keys()].map((level) => (
                             <option key={level} value={level}>
                                 Level {level}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                {/* 카테고리 선택 */}
+                <div style={{ marginBottom: "20px" }}>
+                    <label>Category:</label>
+                    <select
+                        value={newEventCategory}
+                        onChange={(e) => setNewEventCategory(Number(e.target.value))}
+                        style={{
+                            width: "100%",
+                            padding: "10px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                            boxSizing: "border-box",
+                        }}
+                    >
+                        {[...Array(8).keys()].map((c) => (
+                            <option key={c} value={c}>
+                                {categoryData[c]}
                             </option>
                         ))}
                     </select>

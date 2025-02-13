@@ -211,33 +211,49 @@ app.post("/login", (req, res) => {
 
 // Get all events
 app.get("/events", (req, res) => {
+    const userid = parseInt(req.query.userid, 10);
 
-    db.query("SELECT * FROM historyinfo where level=0", (err, results) => {
-        if (err) {
-            console.error("Error fetching events:", err);
-            res.status(500).json({ error: "Database error" });
-        } else {
-            console.log("event query", results);
-            res.json(results);
-        }
-    });
+    //const userId = req.headers["x-user-Id"];
+    if (userid == "null" || userid == undefined || isNaN(userid)) {
+        db.query("SELECT * FROM commonhistory order by id DESC Limit 5", (err, results) => {
+            if (err) {
+                console.error("Error fetching events:", err);
+                res.status(500).json({ error: "Database error" });
+            } else {
+                console.log("event query", results);
+                res.json(results);
+            }
+        });
+    }
+    else {
+        db.query("SELECT * FROM historyinfo where level=0 and userid=?", [userid],
+        (err, results) => {
+            if (err) {
+                console.error("Error fetching events:", err);
+                res.status(500).json({ error: "Database error" });
+            } else {
+                console.log("event query", results);
+                res.json(results);
+            }
+        });
+    }
 });
 
 // Add a new event
 // bc = (0 : AC, 1 : BC), 
 // level = (0~10 0 is top important event. 10 is most detail misc event.user event)
 app.post("/events", (req, res) => {
-    const { createdt, title, description, level, userid } = req.body.newEvent;
+    const { createdt, title, description, level, category, userid } = req.body.newEvent;
     db.query(
-        "INSERT INTO historyinfo (createdt, title, description, level, userid) VALUES (?, ?, ?, ?, ?)",
-        [createdt, title, description, level, userid],
+        "INSERT INTO historyinfo (createdt, title, description, level, category, userid) VALUES (?, ?, ?, ?, ?, ?)",
+        [createdt, title, description, level, category, userid],
         (err, results) => {
             if (err) {
                 console.error("Error adding event:", err);
                 res.status(500).json({ error: "Database error" });
             } else {
                 //console.log("add event", results);
-                res.json({ id: results.insertId, createdt, title, description, level, userid });
+                res.json({ id: results.insertId, createdt, title, description, level, category, userid });
             }
         }
     );

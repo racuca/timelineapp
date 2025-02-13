@@ -52,9 +52,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
         const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
         const width = isVertical ? dynamicWidth : size; // 가로 방향이면 너비를 늘림
         const height = isVertical ? size : 600; // 세로 방향이면 높이를 늘림
-        //console.log("useEffect", width, height);
 
-        //svg.attr("width", width).attr("height", height).style("background", "#f9f9f9");
         svg.attr("width", innerWidth) // 부모 div에 맞춤
             .attr("height", innerHeight)
             .style("background", "#f9f9f9");
