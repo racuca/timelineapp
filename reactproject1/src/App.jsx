@@ -43,7 +43,7 @@ const App = () => {
         if (storedUser) {
             setLoggedInUser(JSON.parse(storedUser));
         }
-    }, []); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
+    }, []);
     
     useEffect(() => {
         const storedUser = Cookies.get("user");
@@ -65,7 +65,7 @@ const App = () => {
             .catch((error) => {
                 console.error("Error fetching events:", error);
             });
-    }, [events]); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
+    }, [events, loggedInUser]); // event 와 user login 변화 시 실행
     
 
     const toggleDirection = () => setIsVertical((prev) => !prev); // 방향 전환 함수

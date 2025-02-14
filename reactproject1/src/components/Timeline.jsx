@@ -50,8 +50,9 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     useEffect(() => {
         const svg = d3.select(svgRef.current);
         const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
-        const width = isVertical ? dynamicWidth : size; // 가로 방향이면 너비를 늘림
-        const height = isVertical ? size : 600; // 세로 방향이면 높이를 늘림
+        const width = size;
+        const height = isVertical ? size : 600;
+        console.log("size width height ", size, width, height);
 
         svg.attr("width", innerWidth) // 부모 div에 맞춤
             .attr("height", innerHeight)
@@ -65,7 +66,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
 
         // Define zoom behavior
         const zoom = d3.zoom()
-            .scaleExtent([0.5, 3]) // 최소 0.5배, 최대 3배 줌
+            .scaleExtent([0.5, 3]) // min x0.5, max x3 zoom
             .on("zoom", (event) => {
                 g.attr("transform", event.transform); // 그룹 요소에 변환 적용
             });
@@ -74,7 +75,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
         zoomBehaviorRef.current = zoom;
 
         // Draw the timeline
-        const linePos = isVertical ? width / 2 : height / 2; // 세로/가로 방향에 따라 선 위치 설정
+        const linePos = isVertical ? width / 2 : height / 2;
         g.append("line")
             .attr("x1", isVertical ? linePos : 50)
             .attr("y1", isVertical ? 50 : linePos)
