@@ -128,7 +128,7 @@ const App = () => {
                             </button>
                         </div>
                         <Timeline svgRef={svgRef} containerRef={containerRef} zoomBehaviorRef={zoomBehaviorRef} events={events} isVertical={isVertical} />
-                        <EventModal isModalOpen={isModalOpen} closeModal={closeModal} events={events} setEvents={setEvents} serverurl={serverurl} containerRef={containerRef} svgRef={svgRef} />
+                        <EventModal isModalOpen={isModalOpen} closeModal={closeModal} events={events} setEvents={setEvents} serverurl={serverurl} containerRef={containerRef} svgRef={svgRef} />                        
                     </div>
                 }
             />

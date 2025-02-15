@@ -27,7 +27,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     // 이벤트 개수 기반 내부 SVG 크기 계산
     const eventCount = events.length;
     const innerWidth = Math.max(baseWidth, eventCount * baseEventSpacing + 100);
-    const innerHeight = isVertical ? innerWidth : 540; 
+    const innerHeight = isVertical ? innerWidth : 550; 
 
     const [selectedCategory, setSelectedCategory] = useState([]);
     const categories = ["개인사", "정치사회", "경제", "예술", "인물", "교육"];
@@ -50,9 +50,9 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     useEffect(() => {
         const svg = d3.select(svgRef.current);
         const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
-        const width = size;
+        const width = size;  // main line width
         const height = isVertical ? size : 600;
-        console.log("size width height ", size, width, height);
+        console.log("size width height ", width, height, innerWidth, innerHeight);
 
         svg.attr("width", innerWidth) // 부모 div에 맞춤
             .attr("height", innerHeight)
@@ -170,27 +170,38 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
 
     return (
         <div>
-            <div className="flex flex-col items-center space-y-4">
-                <div className="border p-2 w-56 bg-white shadow-md">
-                    {categories.map((category, index) => (
-                        <label key={index} className="flex items-center space-x-2">
-                            <input
-                                type="checkbox"
-                                checked={selectedCategory.includes(index)}
-                                onChange={() => toggleSelection(index)}
-                            />
-                            <span>{category}</span>
-                        </label>
-                    ))}
+            <div className="flex flex-col items-center space-y-6 p-6">
+                <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+                    <h2 className="text-lg font-semibold text-gray-700 mb-3 text-center">Select Categories</h2>
+                    <div className="flex space-x-4 overflow-x-auto p-2">
+                        {categories.map((category, index) => (
+                            <label
+                                key={index}
+                                className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 transition"
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={selectedCategory.includes(index)}
+                                    onChange={() => toggleSelection(index)}
+                                    className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring focus:ring-blue-300"
+                                />
+                                <span className="text-gray-800">{category}</span>
+                            </label>
+                        ))}
+                    </div>
+                    <button
+                        onClick={selectCategory}
+                        className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md shadow transition"
+                    >
+                        Select Category
+                    </button>
                 </div>
-                <button onClick={selectCategory}>Select Category</button>
             </div>
-            <div className="button-right-container">
-                
+            {/*<div className="button-right-container">                
                 <button onClick={handleZoomIn}>Zoom In</button>
                 <button onClick={handleZoomOut}>Zoom Out</button>
                 <button onClick={handleZoomReset}>Reset Zoom</button>
-            </div>
+            </div>*/}
             <div style={{
                 width: `${dynamicWidth}px`, // 브라우저 80% 크기 유지
                 height: "600px", // 고정 높이 (필요시 조정)

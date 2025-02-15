@@ -226,7 +226,7 @@ app.get("/events", (req, res) => {
         });
     }
     else {
-        db.query("SELECT * FROM historyinfo where level=0 and userid=?", [userid],
+        db.query("SELECT * FROM historyinfo where userid=?", [userid],
         (err, results) => {
             if (err) {
                 console.error("Error fetching events:", err);
