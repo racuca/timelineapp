@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
 import { convertDateToStr, truncateText }  from "../parseUtils";
+import Cookies from "js-cookie";
 
 
 const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical }) => {
@@ -29,15 +30,8 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     const innerWidth = Math.max(baseWidth, eventCount * baseEventSpacing + 100);
     const innerHeight = isVertical ? innerWidth : 550; 
 
-    const [selectedCategory, setSelectedCategory] = useState([]);
-    const categories = ["개인사", "정치사회", "경제", "예술", "인물", "교육"];
-    const toggleSelection = (index) => {
-        setSelectedCategory((prev) =>
-            prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-        );
-    };
-
     useEffect(() => {
+
         const handleResize = () => {
             console.log("window width change", window.innerWidth);
             setDynamicWidth(Math.max(baseWidth, window.innerWidth * 0.8));
@@ -164,39 +158,10 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
 
     }, [events, isVertical, dynamicWidth]);
 
-    const selectCategory = () => {
-        console.log("Selected categories (indexes):", selectedCategory);
-    };
+
 
     return (
-        <div>
-            <div className="flex flex-col items-center space-y-6 p-6">
-                <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-4 border border-gray-200">
-                    <h2 className="text-lg font-semibold text-gray-700 mb-3 text-center">Select Categories</h2>
-                    <div className="flex space-x-4 overflow-x-auto p-2">
-                        {categories.map((category, index) => (
-                            <label
-                                key={index}
-                                className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 transition"
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={selectedCategory.includes(index)}
-                                    onChange={() => toggleSelection(index)}
-                                    className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring focus:ring-blue-300"
-                                />
-                                <span className="text-gray-800">{category}</span>
-                            </label>
-                        ))}
-                    </div>
-                    <button
-                        onClick={selectCategory}
-                        className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md shadow transition"
-                    >
-                        Select Category
-                    </button>
-                </div>
-            </div>
+        <div>            
             {/*<div className="button-right-container">                
                 <button onClick={handleZoomIn}>Zoom In</button>
                 <button onClick={handleZoomOut}>Zoom Out</button>
@@ -212,22 +177,27 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 <svg ref={svgRef}></svg>
             </div>
             {selectedEvent && (
-                <div style={{
-                    position: "fixed",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    background: "white",
-                    padding: "20px",
-                    boxShadow: "0px 0px 10px rgba(0,0,0,0.3)",
-                    zIndex: 1000,
-                    minWidth: "300px",
-                    textAlign: "center"
-                }}>
-                    <h2>{selectedEvent.createdt}</h2>
-                    <p>{selectedEvent.title}</p>
-                    <p>{selectedEvent.description}</p>
-                    <button onClick={() => setSelectedEvent(null)}>Close</button>
+                <div className="
+                    fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                    bg-white p-6 shadow-lg z-50 min-w-[320px] max-w-[90%] rounded-xl text-center
+                ">
+                    <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                        {selectedEvent.createdt}
+                    </h2>
+                    <p className="text-lg font-bold text-gray-700 mb-2">
+                        {selectedEvent.title}
+                    </p>
+                    <p className="text-base text-gray-600 leading-relaxed mb-4">
+                        {selectedEvent.description}
+                    </p>
+                    <button
+                        onClick={() => setSelectedEvent(null)}
+                        className="
+                        px-4 py-2 bg-blue-500 text-white rounded-lg 
+                        shadow-md transition duration-300 hover:bg-blue-600 active:scale-95"
+                    >
+                        Close
+                    </button>
                 </div>
             )}
         </div>

@@ -36,13 +36,25 @@ const App = () => {
     const serverurl = "http://localhost:5001";
     const navigate = useNavigate(); // To handle navigation
 
+    const [selectedCategory, setSelectedCategory] = useState([0]);
+    const categories = ["개인사", "정치사회", "경제", "예술", "인물", "교육"];
+    const toggleSelection = (index) => {
+        setSelectedCategory((prev) =>
+            prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+        );
+    };
+    const selectCategory = () => {
+        console.log("Selected categories (indexes):", selectedCategory);
+        Cookies.set("usercategory", selectedCategory, { expires: 30 });
+    };
 
     useEffect(() => {
         const storedUser = Cookies.get("user");        
         console.log(storedUser);
         if (storedUser) {
-            setLoggedInUser(JSON.parse(storedUser));
+            setLoggedInUser(JSON.parse(storedUser));            
         }
+
     }, []);
     
     useEffect(() => {
@@ -65,6 +77,14 @@ const App = () => {
             .catch((error) => {
                 console.error("Error fetching events:", error);
             });
+
+        const userCategory = Cookies.get("usercategory");
+        if (userCategory) {
+            setSelectedCategory(userCategory);
+        }
+        else {
+            // server query
+        }
     }, [events, loggedInUser]); // event 와 user login 변화 시 실행
     
 
@@ -77,6 +97,8 @@ const App = () => {
         setLoggedInUser(null); // Clear user data
         navigate("/"); // Redirect to home page after logout
     };
+
+
 
     return (
         <Routes>
@@ -126,6 +148,33 @@ const App = () => {
                             <button style={{ margin: "10px" }} onClick={openModal}>
                                 Add Event
                             </button>
+                        </div>
+                        <div className="flex flex-col items-center space-y-6 p-6">
+                            <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+                                <h2 className="text-lg font-semibold text-gray-700 mb-3 text-center">Select Categories</h2>
+                                <div className="flex space-x-4 overflow-x-auto p-2">
+                                    {categories.map((category, index) => (
+                                        <label
+                                            key={index}
+                                            className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 transition"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedCategory.includes(index)}
+                                                onChange={() => toggleSelection(index)}
+                                                className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring focus:ring-blue-300"
+                                            />
+                                            <span className="text-gray-800">{category}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                                <button
+                                    onClick={selectCategory}
+                                    className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md shadow transition"
+                                >
+                                    Select Category
+                                </button>
+                            </div>
                         </div>
                         <Timeline svgRef={svgRef} containerRef={containerRef} zoomBehaviorRef={zoomBehaviorRef} events={events} isVertical={isVertical} />
                         <EventModal isModalOpen={isModalOpen} closeModal={closeModal} events={events} setEvents={setEvents} serverurl={serverurl} containerRef={containerRef} svgRef={svgRef} />                        
