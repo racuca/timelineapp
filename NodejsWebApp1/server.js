@@ -157,6 +157,37 @@ app.post("/users", (req, res) => {
 
 });
 
+// Add a new user
+app.post("/users/category/:id", (req, res) => {
+    const { id } = req.params;
+    const category = req.body.category;
+
+    // 유효성 검사
+    if (!category) {
+        return res.status(400).json({ message: "선택된 카테고리가 없습니다." });
+    }
+
+    db.query(
+        "UPDATE userdb SET category=? WHERE id = ?",
+        [category, id],
+        (err, results) => {
+            if (err) {
+                console.error("Error updating user:", err);
+                res.status(500).json({ error: "Database error" });
+            } else {
+                // Event query                
+                const output = "(" + category.split(",").map(x => `'${x}'`).join(", ") + ")";
+                const sql = "SELECT * FROM historyinfo WHERE category in " + output;
+                db.query(sql, [], async (err, results) => {
+                    if (err) {
+                    }
+                    res.json({ results });
+                });
+            }
+        }
+    );
+
+});
 
 // 로그인 (POST /login)
 app.post("/login", (req, res) => {

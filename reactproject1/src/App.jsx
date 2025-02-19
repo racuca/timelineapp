@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import Cookies from "js-cookie";
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { parseDate } from "./parseUtils";
 import Timeline from "./components/Timeline";
 import EventModal from "./components/EventModal";
@@ -45,7 +45,21 @@ const App = () => {
     };
     const selectCategory = () => {
         console.log("Selected categories (indexes):", selectedCategory);
-        Cookies.set("usercategory", selectedCategory, { expires: 30 });
+        //Cookies.set("usercategory", selectedCategory, { expires: 30 });
+        // server update
+        const categorystr = {category: selectedCategory.join()};
+
+        axios
+            .post(serverurl + "/users/category/" + loggedInUser.id, categorystr)
+            .then((response) => {
+                const sortedEvents = [...response.data.results].sort((a, b) => parseDate(a.createdt) - parseDate(b.createdt));
+                if (JSON.stringify(events) !== JSON.stringify(sortedEvents)) {
+                    setEvents(sortedEvents); // 정렬된 데이터 저장
+                }
+            })
+            .catch((error) => {
+                console.error("Error updating user:", error);
+            });
     };
 
     useEffect(() => {
@@ -78,13 +92,6 @@ const App = () => {
                 console.error("Error fetching events:", error);
             });
 
-        const userCategory = Cookies.get("usercategory");
-        if (userCategory) {
-            setSelectedCategory(userCategory);
-        }
-        else {
-            // server query
-        }
     }, [events, loggedInUser]); // event 와 user login 변화 시 실행
     
 
