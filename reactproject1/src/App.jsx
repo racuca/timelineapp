@@ -183,6 +183,9 @@ const App = () => {
                                 </button>
                             </div>
                         </div>
+                            <p className="modal-text">하나 이상 선택해야 합니다.</p>
+                            <button className="close-btn" onClick={() => setIsPopupOpen(false)}>닫기</button>
+                        </Modal>
                         <Timeline svgRef={svgRef} containerRef={containerRef} zoomBehaviorRef={zoomBehaviorRef} events={events} isVertical={isVertical} />
                         <EventModal isModalOpen={isModalOpen} closeModal={closeModal} events={events} setEvents={setEvents} serverurl={serverurl} containerRef={containerRef} svgRef={svgRef} />                        
                     </div>
