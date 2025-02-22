@@ -25,8 +25,7 @@ const App = () => {
         //{ id: 3, date: "BC 0100-01-01 00:00:00", description: "BC 100", level:0 },
     ]);
 
-    const [loggedInUser, setLoggedInUser] = useState(null); // To track logged-in user
-    
+    const [loggedInUser, setLoggedInUser] = useState(null); // To track logged-in user    
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isVertical, setIsVertical] = useState(false); // 타임라인 방향 상태 추가
 
@@ -43,7 +42,14 @@ const App = () => {
             prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
         );
     };
+
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+
     const selectCategory = () => {
+        if (selectedCategory.length == 0) {
+            setIsPopupOpen(true);
+        }
+
         console.log("Selected categories (indexes):", selectedCategory);
         //Cookies.set("usercategory", selectedCategory, { expires: 30 });
         // server update
@@ -183,6 +189,13 @@ const App = () => {
                                 </button>
                             </div>
                         </div>
+                        <Modal
+                            isOpen={isPopupOpen}
+                            onRequestClose={() => setIsPopupOpen(false)}
+                            className="modal-content"
+                            overlayClassName="modal-overlay"
+                        >
+                            <h2 className="modal-title">에러</h2>
                             <p className="modal-text">하나 이상 선택해야 합니다.</p>
                             <button className="close-btn" onClick={() => setIsPopupOpen(false)}>닫기</button>
                         </Modal>

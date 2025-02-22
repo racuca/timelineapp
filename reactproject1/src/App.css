@@ -83,3 +83,95 @@ svg {
 .read-the-docs {
   color: #888;
 }
+
+/* 전체 배경 오버레이 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5); /* 투명한 블러 효과 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 팝업 스타일 */
+.modal-content {
+    background: white;
+    width: 350px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s ease-in-out;
+    animation: scaleUp 0.3s ease-in-out forwards;
+}
+
+/* 팝업 제목 */
+.modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* 팝업 내용 */
+.modal-text {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+/* 버튼 공통 스타일 */
+.open-btn, .close-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+/* 팝업 열기 버튼 */
+.open-btn {
+    background: #007bff;
+    color: white;
+}
+
+.open-btn:hover {
+    background: #0056b3;
+}
+
+/* 닫기 버튼 */
+.close-btn {
+    background: #dc3545;
+    color: white;
+}
+
+.close-btn:hover {
+    background: #a71d2a;
+}
+
+/* 모달 등장 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0.9);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}

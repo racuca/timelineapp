@@ -7,5 +7,5 @@ export default defineConfig({
     plugins: [plugin(), WindiCSS()],
     server: {
         port: 62684,
-    }
+    },    
 })
