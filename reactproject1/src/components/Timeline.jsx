@@ -42,6 +42,9 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     }, []);
 
     useEffect(() => {
+
+        console.log("event length", events);
+
         const svg = d3.select(svgRef.current);
         const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
         const width = size;  // main line width

@@ -157,7 +157,9 @@ app.post("/users", (req, res) => {
 
 });
 
-// Add a new user
+/////////////////////////////////////////////////////////////////////////
+// Update a category info of userdb
+
 app.post("/users/category/:id", (req, res) => {
     const { id } = req.params;
     const category = req.body.category;
@@ -175,7 +177,7 @@ app.post("/users/category/:id", (req, res) => {
                 console.error("Error updating user:", err);
                 res.status(500).json({ error: "Database error" });
             } else {
-                // Event query                
+                // Event query with category
                 const output = "(" + category.split(",").map(x => `'${x}'`).join(", ") + ")";
                 const sql = "SELECT * FROM historyinfo WHERE category in " + output;
                 db.query(sql, [], async (err, results) => {
@@ -243,8 +245,8 @@ app.post("/login", (req, res) => {
 // Get all events
 app.get("/events", (req, res) => {
     const userid = parseInt(req.query.userid, 10);
+    const category = req.query.category.category;
 
-    //const userId = req.headers["x-user-Id"];
     if (userid == "null" || userid == undefined || isNaN(userid)) {
         db.query("SELECT * FROM commonhistory order by id DESC Limit 5", (err, results) => {
             if (err) {
@@ -257,7 +259,9 @@ app.get("/events", (req, res) => {
         });
     }
     else {
-        db.query("SELECT * FROM historyinfo where userid=?", [userid],
+        const output = "(" + category.split(",").map(x => `'${x}'`).join(", ") + ")";
+        const sql = "SELECT * FROM historyinfo WHERE userid=" + userid + " and category in " + output;
+        db.query(sql, [],
         (err, results) => {
             if (err) {
                 console.error("Error fetching events:", err);

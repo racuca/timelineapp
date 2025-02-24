@@ -48,6 +48,7 @@ const App = () => {
     const selectCategory = () => {
         if (selectedCategory.length == 0) {
             setIsPopupOpen(true);
+            return;
         }
 
         console.log("Selected categories (indexes):", selectedCategory);
@@ -78,6 +79,17 @@ const App = () => {
     }, []);
     
     useEffect(() => {
+        if (selectedCategory.length == 0) {
+            setIsPopupOpen(true);
+            return;
+        }
+
+        console.log("Selected categories (indexes):", selectedCategory);
+        //Cookies.set("usercategory", selectedCategory, { expires: 30 });
+        // server update
+        const categorystr = { category: selectedCategory.join() };
+
+
         const storedUser = Cookies.get("user");
         let userobj = undefined;
         if (storedUser) {
@@ -86,7 +98,10 @@ const App = () => {
 
         axios
             .get(serverurl + "/events", {
-                params: { userid: userobj ? userobj["id"] : "null" }
+                params: {
+                    userid: userobj ? userobj["id"] : "null",
+                    category: categorystr
+                }
             })
             .then((response) => {
                 const sortedEvents = [...response.data].sort((a, b) => parseDate(a.createdt) - parseDate(b.createdt));
