@@ -5,10 +5,27 @@ import { parseDate } from "../parseUtils";
 import Cookies from "js-cookie";
 
 const TodaysHistory = ({ serverurl }) => {
-    return (
 
+    const [todayevents, setTodayevents] = useState([]);
+
+    useEffect(() => {
+
+        const now = new Date();
+        // query Today events
+        setTodayevents(null);
+
+
+    }, []); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
+
+
+
+    return (        
         <div>
-            Todays History is ...
+            {todayevents ? (
+                <p>Todays History is ...</p>
+            ) : (
+                <p>Nothing to happen...ㅠㅠ</p>
+            )}
         </div>
     );
 
