@@ -94,7 +94,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                     })`
             
             ).on("click", (event, d) => {
-                setSelectedEvent(d); // 박스를 클릭하면 선택된 이벤트 설정
+                setSelectedEvent(d);
             });
 
         // Add text and dynamically calculate box size
@@ -182,7 +182,8 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
             {selectedEvent && (
                 <div className="
                     fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                    bg-white p-6 shadow-lg z-50 min-w-[320px] max-w-[90%] rounded-xl text-center
+                    bg-white p-6 shadow-lg z-50 min-w-[320px] max-w-[90%] rounded-xl text-center 
+                    border-solid border-green-500
                 ">
                     <h2 className="text-xl font-semibold text-gray-800 mb-2">
                         {selectedEvent.createdt}

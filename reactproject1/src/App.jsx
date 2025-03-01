@@ -36,7 +36,7 @@ const App = () => {
     const navigate = useNavigate(); // To handle navigation
 
     const [selectedCategory, setSelectedCategory] = useState([0]);
-    const categories = ["개인사", "정치사회", "경제", "예술", "인물", "교육"];
+    const categories = ["개인사", "정치사회", "경제", "예술", "인물", "과학기술", "전쟁", "스포츠"];
     const toggleSelection = (index) => {
         setSelectedCategory((prev) =>
             prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
@@ -178,7 +178,7 @@ const App = () => {
                             </button>
                         </div>
                         <div className="flex flex-col items-center space-y-6 p-6">
-                            <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+                            <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-4 border border-gray-200 bg-gray-200">
                                 <h2 className="text-lg font-semibold text-gray-700 mb-3 text-center">Select Categories</h2>
                                 <div className="flex space-x-4 overflow-x-auto p-2">
                                     {categories.map((category, index) => (
