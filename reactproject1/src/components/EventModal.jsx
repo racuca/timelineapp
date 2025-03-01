@@ -88,8 +88,9 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
 
     const handleToggleBC = () => setIsBC((prev) => !prev);
     const categoryData = {
-        0: "개인사", 1: "정치사회", 2: "경제", 3: "예술",
-        4: "인물", 5: "과학기술", 6: "전쟁", 7: "스포츠"
+        0: "개인사", 1: "정치사회", 2: "경제", 3: "문화예술",
+        4: "인물", 5: "과학기술", 6: "전쟁", 7: "스포츠",
+        8: "철학사상", 9: "종교", 10: "자연재해환경"
     };
     return (
         <div>

@@ -6,10 +6,12 @@ import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { parseDate } from "./parseUtils";
 import Timeline from "./components/Timeline";
 import EventModal from "./components/EventModal";
+import TodaysHistory from "./components/TodaysHistory";
 import LoginPage from "./LoginPage";
 import SignUpPage from "./SignUpPage";
 import AdminPage from "./admin/AdminPage"
 import UserInfoPage from "./UserInfoPage";
+
 import "./App.css";
 
 // npm install 
@@ -36,7 +38,7 @@ const App = () => {
     const navigate = useNavigate(); // To handle navigation
 
     const [selectedCategory, setSelectedCategory] = useState([0]);
-    const categories = ["개인사", "정치사회", "경제", "예술", "인물", "과학기술", "전쟁", "스포츠"];
+    const categories = ["개인사", "정치사회", "경제", "문화예술", "인물", "과학기술", "전쟁", "스포츠", "철학사상", "종교", "자연재해환경"];
     const toggleSelection = (index) => {
         setSelectedCategory((prev) =>
             prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
@@ -177,10 +179,12 @@ const App = () => {
                                 Add Event
                             </button>
                         </div>
+                        <TodaysHistory serverurl={serverurl} />
+
                         <div className="flex flex-col items-center space-y-6 p-6">
-                            <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-4 border border-gray-200 bg-gray-200">
+                            <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-4 border border-gray-200 bg-gray-200">
                                 <h2 className="text-lg font-semibold text-gray-700 mb-3 text-center">Select Categories</h2>
-                                <div className="flex space-x-4 overflow-x-auto p-2">
+                                <div className="flex flex-wrap space-x-2 overflow-x-auto">
                                     {categories.map((category, index) => (
                                         <label
                                             key={index}
