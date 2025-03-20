@@ -179,16 +179,20 @@ app.post("/users/category/:id", (req, res) => {
             } else {
                 // Event query with category
                 const output = "(" + category.split(",").map(x => `'${x}'`).join(", ") + ")";
-                const sql = "SELECT * FROM historyinfo WHERE category in " + output;
+                /*const sql = "SELECT * FROM historyinfo WHERE category in " + output;
                 db.query(sql, [], async (err, results) => {
                     if (err) {
                     }
                     res.json({ results });
-                });
-            }
+                });*/
+                const sql = "select * from commonhistory where category in " + output + "union select * from historyinfo where userid = ? and category in " + output;
+                db.query(sql, [id, id], async (err, results) => {
+                    if (err) {
+                    }
+                    res.json({ results });
+                });            }
         }
     );
-
 });
 
 // 로그인 (POST /login)
@@ -422,7 +426,7 @@ app.post("/admin/events/add", (req, res) => {
     try {
         const historyData = req.body;
         const query =
-            "INSERT INTO commonhistory (createdt, title, description, level, userid) VALUES (?, ?, ?, ?, ?)";
+            "INSERT INTO commonhistory (createdt, title, description, level, category, userid) VALUES (?, ?, ?, ?, ?, ?)";
 
         for (const entry of historyData) {
             db.execute(query, [
@@ -430,7 +434,8 @@ app.post("/admin/events/add", (req, res) => {
                 entry.title,
                 entry.description,
                 entry.level,
-                entry.userid,
+                entry.category,
+                entry.userid
             ]);
         }
 

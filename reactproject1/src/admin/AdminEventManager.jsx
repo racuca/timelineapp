@@ -137,13 +137,28 @@ const EventManagement = ({ serverurl }) => {
                 </table>
                 <div className="p-6">
                     <h2 className="text-xl font-bold mb-4">역사 데이터 저장</h2>
+                    <p>
+                        category:
+                        0: 개인사, 1: 정치사회, 2: 경제, 3: 문화예술, <br />
+                        4: 인물, 5: 과학기술, 6: 전쟁, 7: 스포츠, <br />
+                        8: 철학사상, 9: 종교, 10: 자연재해환경 <br />                        
+                    </p>
                     <div>
                         <textarea
                         rows="10" cols="50"
                         className="w-full h-60 p-2 border rounded-md"
                         value={jsonData}
                         onChange={(e) => setJsonData(e.target.value)}
-                        placeholder='JSON 데이터를 입력하세요'
+                        placeholder='[
+    {
+        "createdt": "2025-03-19 00:00:00",
+        "title": "2025년 새해 첫날",
+        "description": "계엄으로 인해 내란혐의를 받는 윤대통령. 올 한해는 이 암울한 시기에서 벗어났으면 좋겠다.",
+        "level": 0,
+        "category": 0
+        "userid": 0,
+    },
+]'
                         />
                     </div>
                     <button className="mt-4" onClick={handleAddEvent}>

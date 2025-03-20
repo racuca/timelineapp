@@ -115,7 +115,7 @@ const App = () => {
                 console.error("Error fetching events:", error);
             });
 
-    }, [events, loggedInUser]); // event 와 user login 변화 시 실행
+    }, [loggedInUser]); // event 와 user login 변화 시 실행
     
 
     const toggleDirection = () => setIsVertical((prev) => !prev); // 방향 전환 함수
