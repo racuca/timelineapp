@@ -29,7 +29,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     useEffect(() => {
 
         const handleResize = () => {
-            console.log("window width change", window.innerWidth);
+            //console.log("window width change", window.innerWidth);
             setDynamicWidth(Math.max(baseWidth, window.innerWidth * 0.8));
         };
 
@@ -39,7 +39,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
 
     useEffect(() => {
 
-        console.log("event length", events);
+        //console.log("event length", events);
         // 이벤트 개수 기반 내부 SVG 크기 계산
         const eventCount = events.length;
 
@@ -50,7 +50,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
         const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
         const width = isVertical? baseWidth : size;  // main line width
         const height = isVertical ? size : 600;
-        console.log("size width height ", width, height, innerWidth, innerHeight);
+        //console.log("size width height ", width, height, innerWidth, innerHeight);
 
         svg.attr("width", innerWidth) // 부모 div에 맞춤
             .attr("height", innerHeight)

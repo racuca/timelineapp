@@ -53,7 +53,7 @@ const App = () => {
             return;
         }
 
-        console.log("Selected categories (indexes):", selectedCategory);
+        //console.log("Selected categories (indexes):", selectedCategory);
         //Cookies.set("usercategory", selectedCategory, { expires: 30 });
         // server update
         const categorystr = {category: selectedCategory.join()};
@@ -73,7 +73,7 @@ const App = () => {
 
     useEffect(() => {
         const storedUser = Cookies.get("user");        
-        console.log(storedUser);
+        //console.log(storedUser);
         if (storedUser) {
             setLoggedInUser(JSON.parse(storedUser));            
         }
@@ -86,7 +86,7 @@ const App = () => {
             return;
         }
 
-        console.log("Selected categories (indexes):", selectedCategory);
+        //console.log("Selected categories (indexes):", selectedCategory);
         //Cookies.set("usercategory", selectedCategory, { expires: 30 });
         // server update
         const categorystr = { category: selectedCategory.join() };

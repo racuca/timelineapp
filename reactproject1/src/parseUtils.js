@@ -42,10 +42,10 @@ export const convertDateToStr = (date) => {
     if (date.startsWith("BC ")) {
         const parts = date.replace("BC ", "").split(/[- :]/);
         const bcYear = -parseInt(parts[0], 10) + 1; // BC 1년을 0으로 취급하기 위해 +1
-        console.log(parts, bcYear);
+        //console.log(parts, bcYear);
 
         const res = "기원전 " + -bcYear + "년";
-        console.log(res);
+        //console.log(res);
         return res;
     }
     else {

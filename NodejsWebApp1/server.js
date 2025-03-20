@@ -185,7 +185,7 @@ app.post("/users/category/:id", (req, res) => {
                     }
                     res.json({ results });
                 });*/
-                const sql = "select * from commonhistory where category in " + output + "union select * from historyinfo where userid = ? and category in " + output;
+                const sql = "select * from commonhistory where category in " + output + " union select * from historyinfo where userid = ? and category in " + output;
                 db.query(sql, [id], async (err, results) => {
                     if (err) {
                     }

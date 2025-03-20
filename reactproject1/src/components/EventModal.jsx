@@ -21,7 +21,7 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
 
     useEffect(() => {
         const storedUser = Cookies.get("user");
-        console.log(storedUser);
+        //console.log(storedUser);
         if (storedUser) {
             setLoggedInUser(JSON.parse(storedUser));
         }
