@@ -168,7 +168,7 @@ app.post("/users/category/:id", (req, res) => {
     if (!category) {
         return res.status(400).json({ message: "선택된 카테고리가 없습니다." });
     }
-
+    // userdb 에 선택한 category 저장
     db.query(
         "UPDATE userdb SET category=? WHERE id = ?",
         [category, id],
@@ -186,11 +186,12 @@ app.post("/users/category/:id", (req, res) => {
                     res.json({ results });
                 });*/
                 const sql = "select * from commonhistory where category in " + output + "union select * from historyinfo where userid = ? and category in " + output;
-                db.query(sql, [id, id], async (err, results) => {
+                db.query(sql, [id], async (err, results) => {
                     if (err) {
                     }
                     res.json({ results });
-                });            }
+                });
+            }
         }
     );
 });

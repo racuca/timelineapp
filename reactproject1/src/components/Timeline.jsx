@@ -21,14 +21,10 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     };
     const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 정보
 
-    const baseWidth = 800; // 기본 타임라인 너비
+    const baseWidth = 900; // 기본 타임라인 너비
     const baseEventSpacing = 100; // 이벤트 간 기본 간격
     const [dynamicWidth, setDynamicWidth] = useState(window.innerWidth * 0.8);
 
-    // 이벤트 개수 기반 내부 SVG 크기 계산
-    const eventCount = events.length;
-    const innerWidth = Math.max(baseWidth, eventCount * baseEventSpacing + 100);
-    const innerHeight = isVertical ? innerWidth : 550; 
 
     useEffect(() => {
 
@@ -44,10 +40,15 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     useEffect(() => {
 
         console.log("event length", events);
+        // 이벤트 개수 기반 내부 SVG 크기 계산
+        const eventCount = events.length;
+
+        const innerWidth = Math.max(baseWidth, isVertical ? 3 * baseEventSpacing + 100 : eventCount * baseEventSpacing + 100);
+        const innerHeight = isVertical ? eventCount * baseEventSpacing + 100 : 550; 
 
         const svg = d3.select(svgRef.current);
         const size = Math.max(baseWidth, events.length * baseEventSpacing + 100); // 타임라인 너비 계산
-        const width = size;  // main line width
+        const width = isVertical? baseWidth : size;  // main line width
         const height = isVertical ? size : 600;
         console.log("size width height ", width, height, innerWidth, innerHeight);
 
