@@ -48,7 +48,13 @@ export const convertDateToStr = (date) => {
         console.log(res);
         return res;
     }
-
+    else {
+        const datetimes = date.split(" ");
+        if (datetimes[0].endsWith("-01-01"))
+            return datetimes[0].replace("-01-01", "") + "년";
+        else if (datetimes[1] == "00:00:00")
+            return datetimes[0];
+    }
     return date;
 };
 
