@@ -46,6 +46,8 @@ const App = () => {
     };
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isSettingOpen, setIsSettingOpen] = useState(false);
+    const toggleSetting = () => setIsSettingOpen(!isSettingOpen);
 
     const selectCategory = () => {
         if (selectedCategory.length == 0) {
@@ -69,6 +71,8 @@ const App = () => {
             .catch((error) => {
                 console.error("Error updating user:", error);
             });
+
+        toggleSetting();
     };
 
     useEffect(() => {
@@ -180,34 +184,42 @@ const App = () => {
                             </button>
                         </div>
                         <TodaysHistory serverurl={serverurl} />
-
-                        <div className="flex flex-col items-center space-y-6 p-6">
-                            <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-4 border border-gray-200 bg-gray-200">
-                                <h2 className="text-lg font-semibold text-gray-700 mb-3 text-center">Select Categories</h2>
-                                <div className="flex flex-wrap space-x-2 overflow-x-auto">
-                                    {categories.map((category, index) => (
-                                        <label
-                                            key={index}
-                                            className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 transition"
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedCategory.includes(index)}
-                                                onChange={() => toggleSelection(index)}
-                                                className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring focus:ring-blue-300"
-                                            />
-                                            <span className="text-gray-800">{category}</span>
-                                        </label>
-                                    ))}
+                        {/* 설정 버튼 */}
+                        <button
+                            onClick={toggleSetting}
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow transition"
+                        >
+                            설정
+                        </button>
+                        {isSettingOpen && (
+                            <div className="flex flex-col items-center space-y-6 p-6">
+                                <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-4 border border-gray-200 bg-gray-200">
+                                    <h2 className="text-lg font-semibold text-gray-700 mb-3 text-center">Select Categories</h2>
+                                    <div className="flex flex-wrap space-x-2 overflow-x-auto">
+                                        {categories.map((category, index) => (
+                                            <label
+                                                key={index}
+                                                className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 transition"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedCategory.includes(index)}
+                                                    onChange={() => toggleSelection(index)}
+                                                    className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring focus:ring-blue-300"
+                                                />
+                                                <span className="text-gray-800">{category}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                    <button
+                                        onClick={selectCategory}
+                                        className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md shadow transition"
+                                    >
+                                        Select Category
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={selectCategory}
-                                    className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md shadow transition"
-                                >
-                                    Select Category
-                                </button>
-                            </div>
-                        </div>
+                            </div>       
+                        )}   
                         <Modal
                             isOpen={isPopupOpen}
                             onRequestClose={() => setIsPopupOpen(false)}

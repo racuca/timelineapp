@@ -10,6 +10,7 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
     const [newEventDescription, setNewEventDescription] = useState("");
     const [newEventLevel, setNewEventLevel] = useState(0); // Default level: 0
     const [newEventCategory, setNewEventCategory] = useState(0); // Default category: 0
+    const [newEventCountry, setNewEventCountry] = useState(0); // Default country: 0
     const [year, setYear] = useState(0);
     const [month, setMonth] = useState(0);
     const [day, setDay] = useState(0);
@@ -53,7 +54,8 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
             description: newEventDescription,
             level: newEventLevel || 0,
             category: newEventCategory, 
-            userid: loggedInUser.id
+            userid: loggedInUser.id,
+            country: newEventCountry
         };
 
         setEvents((prevEvents) => {
@@ -69,6 +71,7 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                 setNewEventTitle("");
                 setNewEventDescription("");
                 setNewEventLevel(0);
+                setNewEventCountry(0);
             })
             .catch((error) => {
                 console.error("Error adding history:", error);
@@ -92,6 +95,12 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
         4: "인물", 5: "과학기술", 6: "전쟁", 7: "스포츠",
         8: "철학사상", 9: "종교", 10: "자연재해환경"
     };
+
+    const countryData = {
+        0: "전세계", 1: "대한민국", 2: "중국", 3: "아메리카", 4: "유럽", 5: "아시아",
+        6:"아프리카", 7:"북극", 8:"남극"
+    };
+
     return (
         <div>
             <Modal
@@ -231,6 +240,27 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                         {[...Array(8).keys()].map((c) => (
                             <option key={c} value={c}>
                                 {categoryData[c]}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                {/* 나라 선택 */}
+                <div style={{ marginBottom: "20px" }}>
+                    <label>Country:</label>
+                    <select
+                        value={newEventCountry}
+                        onChange={(e) => setNewEventCountry(Number(e.target.value))}
+                        style={{
+                            width: "100%",
+                            padding: "10px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                            boxSizing: "border-box",
+                        }}
+                    >
+                        {[...Array(9).keys()].map((c) => (
+                            <option key={c} value={c}>
+                                {countryData[c]}
                             </option>
                         ))}
                     </select>
