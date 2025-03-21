@@ -215,7 +215,7 @@ const App = () => {
                                         onClick={selectCategory}
                                         className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md shadow transition"
                                     >
-                                        Select Category
+                                        Select
                                     </button>
                                 </div>
                             </div>       
