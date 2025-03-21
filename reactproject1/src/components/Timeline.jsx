@@ -138,11 +138,11 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 .attr("y", isVertical ? (i % 2 === 0 ? bbox.y-10 : bbox.y-10) : bbox.y-10)
                 .attr("width", bbox.width + padding)
                 .attr("height", bbox.height + padding)
-                .attr("rx", 4)  // 모서리 radius
-                .attr("ry", 4)
+                .attr("rx", 8)  // 모서리 radius
+                .attr("ry", 8)
                 .attr("fill", "white")
                 .attr("stroke", "steelblue")
-                .attr("stroke-width", 1.5)
+                .attr("stroke-width", 3 - d.level)
                 .on("click", (event, d) => {
                     setSelectedEvent(d); // 박스를 클릭하면 이벤트 정보 저장
                 })
@@ -187,7 +187,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                     border-solid border-green-500
                 ">
                     <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                        {selectedEvent.createdt}
+                        {convertDateToStr(selectedEvent.createdt)}
                     </h2>
                     <p className="text-lg font-bold text-gray-700 mb-2">
                         {selectedEvent.title}

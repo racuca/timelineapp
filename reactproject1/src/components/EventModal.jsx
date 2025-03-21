@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import { parseDate } from "../parseUtils";
@@ -100,6 +100,22 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
         0: "전세계", 1: "대한민국", 2: "중국", 3: "아메리카", 4: "유럽", 5: "아시아",
         6:"아프리카", 7:"북극", 8:"남극"
     };
+
+    const [tooltip, setTooltip] = useState({ isOpen: false, x: 0, y: 0 });
+    const buttonRef = useRef(null);
+    const toggleTooltip = () => {
+        if (tooltip.isOpen) {
+            setTooltip({ ...tooltip, isOpen: false });
+        } else if (buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setTooltip({
+                isOpen: true,
+                x: rect.left + rect.width / 2, // 버튼 중앙 정렬
+                y: rect.top + rect.height + window.scrollY + 8, // 버튼 아래 여유 공간 추가
+            });
+        }
+    };
+
 
     return (
         <div>
@@ -204,7 +220,37 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                 </div>
                 {/* 레벨 선택 */}
                 <div style={{ marginBottom: "20px" }}>
-                    <label>Level:</label>
+                    <div className="relative flex items-center space-x-2">
+                        <label>Level</label>
+                        {/* "?" 버튼 */}
+                        <button
+                            ref={buttonRef}
+                            onClick={toggleTooltip}
+                            className="w-6 h-6 flex items-center justify-center bg-gray-300 rounded-full text-sm font-bold hover:bg-gray-400"
+                        >
+                            ?
+                        </button>
+                    </div>
+                    {/* 팝업 설명 박스 */}
+                    {tooltip.isOpen && (
+                        <div className="absolute left-10 top-0 w-64 bg-white shadow-md border border-gray-200 p-3 rounded-lg z-10"
+                            style={{
+                                top: `${tooltip.y - 50}px`,
+                                left: `${tooltip.x - 550}px`, // 팝업을 버튼 중앙에 맞추기
+                                transform: "translateX(-50%)", // 가운데 정렬
+                            }}
+                        >
+                            <p className="text-sm text-gray-700">
+                                Level은 역사적 중요도를 3단계로 표시하는데 값이 작을수록 중요한 역사적 사건입니다. 
+                            </p>
+                            <button
+                                onClick={toggleTooltip}
+                                className="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold py-1 rounded-md shadow transition"
+                            >
+                                닫기
+                            </button>
+                        </div>
+                    )}
                     <select
                         value={newEventLevel}
                         onChange={(e) => setNewEventLevel(Number(e.target.value))}
@@ -216,7 +262,7 @@ const EventModal = ({ isModalOpen, closeModal, events, setEvents, serverurl, con
                             boxSizing: "border-box",
                         }}
                     >
-                        {[...Array(11).keys()].map((level) => (
+                        {[...Array(3).keys()].map((level) => (
                             <option key={level} value={level}>
                                 Level {level}
                             </option>

@@ -18,7 +18,7 @@ const UserInfoPage = () => {
                 .then(response => {
                     setRecentEvents(response.data)
                 })
-                .catch(error => console.error("Error fetching events:", error));
+                .catch(error => console.error("Error fetching user event:", error));
         }
     }, [user.id]);
 

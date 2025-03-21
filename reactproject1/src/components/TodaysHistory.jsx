@@ -26,7 +26,7 @@ const TodaysHistory = ({ serverurl }) => {
                     setTodayevents(response);
             })
             .catch((error) => {
-                console.error("Error fetching events:", error);
+                console.error("Error fetching Today events:", error);
             });
         
     }, []); // 빈 배열을 넣어 처음 렌더링 시 한 번만 실행
