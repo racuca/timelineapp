@@ -131,8 +131,11 @@ const App = () => {
         setLoggedInUser(null); // Clear user data
         navigate("/"); // Redirect to home page after logout
     };
-
-
+        
+    const handleSetting = () => {
+                
+        navigate("/"); 
+    };
 
     return (
         <Routes>
@@ -161,6 +164,9 @@ const App = () => {
                                         )}
                                         <button onClick={handleLogout} style={{ marginLeft: "10px" }}>
                                             Logout
+                                        </button>
+                                        <button onClick={handleSetting} style={{ marginLeft: "10px" }}>
+                                            Setting
                                         </button>
                                     </div>
                                 ) : (

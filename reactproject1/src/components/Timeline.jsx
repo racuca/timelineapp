@@ -24,7 +24,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
     const baseWidth = 900; // 기본 타임라인 너비
     const baseEventSpacing = 100; // 이벤트 간 기본 간격
     const [dynamicWidth, setDynamicWidth] = useState(window.innerWidth * 0.8);
-
+    const [loginUser, setLoginUser] = useState(null);
 
     useEffect(() => {
 
@@ -32,6 +32,12 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
             //console.log("window width change", window.innerWidth);
             setDynamicWidth(Math.max(baseWidth, window.innerWidth * 0.8));
         };
+
+        const storedUser = Cookies.get("user");
+        if (storedUser) {
+            const userobj = JSON.parse(storedUser);
+            setLoginUser(userobj);
+        }
 
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
@@ -126,10 +132,14 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 .attr("dy", "2em");
         });
 
+        let strokecolor = "steelblue";
         // 박스 추가
         textElements.each(function (d, i) {
             const bbox = this.getBBox(); // Get text size dynamically
             const padding = 20;
+            if (loginUser) {
+                strokecolor = (d.userid == 0) ? "steelblue" : "lightgreen";
+            }
 
             // Add background rectangle for each text
             d3.select(this.parentNode)
@@ -141,7 +151,7 @@ const Timeline = ({ svgRef, containerRef, zoomBehaviorRef, events, isVertical })
                 .attr("rx", 8)  // 모서리 radius
                 .attr("ry", 8)
                 .attr("fill", "white")
-                .attr("stroke", "steelblue")
+                .attr("stroke", strokecolor)
                 .attr("stroke-width", 3 - d.level)
                 .on("click", (event, d) => {
                     setSelectedEvent(d); // 박스를 클릭하면 이벤트 정보 저장
